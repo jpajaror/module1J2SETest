@@ -18,6 +18,8 @@ import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -25,7 +27,12 @@ import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.templates.TemplateRegistration;
+import org.netbeans.modules.java.j2seproject.api.J2SEProjectBuilder;
+import org.netbeans.spi.project.support.ant.AntProjectHelper;
+import org.netbeans.spi.project.ui.support.ProjectChooser;
 import org.openide.WizardDescriptor;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle;
 
 @TemplateRegistration(folder = "Project/Verifone",
@@ -59,9 +66,13 @@ public final class NewVFIJ2SEProjectWizardIterator
 	private List<WizardDescriptor.Panel<WizardDescriptor>> panels;
 	private transient volatile WizardDescriptor wiz;
 
+	static final String PROP_BUILD_SCRIPT_NAME = "buildScriptName";		//NOI18N
+	static final String PROP_DIST_FOLDER = "distFolder";				//NOI18N
+	private static final String MANIFEST_FILE = "manifest.mf";			// NOI18N
+
 	@Override
 	public void initialize(WizardDescriptor wizard) {
-		this.wiz=wiz;
+		this.wiz=wizard;
 		index=0;
 		panels = createPanels();
 		String[] steps = createSteps();
@@ -86,6 +97,7 @@ public final class NewVFIJ2SEProjectWizardIterator
 		panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
 		panels.add(new NewVFIJ2SEProjectWizardPanel1());
 		panels.add(new NewVFIJ2SEProjectWizardPanel2());
+//TODO: Clean
 //		if (panels == null) {
 //			panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
 //			panels.add(new NewVFIJ2SEProjectWizardPanel1());
@@ -110,8 +122,8 @@ public final class NewVFIJ2SEProjectWizardIterator
 
 	private String[] createSteps() {
 		return new String[] {
-			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LAB_ConfigureProject"),
-			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LAB_ConfigureSourceRoots"),
+			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LBL.ConfigureProject"),
+			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LBL.ConfigureSourceRoots"),
 		};
 	}
 
@@ -123,7 +135,7 @@ public final class NewVFIJ2SEProjectWizardIterator
 
 	@Override
 	public String name() {
-		return NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class, "M_OF_N",
+		return NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class, "LBL.M_OF_N",
 				index + 1, panels.size());
 	}
 
@@ -175,6 +187,61 @@ public final class NewVFIJ2SEProjectWizardIterator
 
 	@Override
 	public Set instantiate(ProgressHandle handle) throws IOException {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		final WizardDescriptor myWiz = this.wiz;
+		if (myWiz == null) {
+			return Collections.emptySet();
+		}
+		handle.start (4);
+
+		Set<FileObject> resultSet = new HashSet<>();
+		File dirF = (File)myWiz.getProperty("projdir");				//NOI18N
+		if (dirF == null) {
+			throw new NullPointerException ("projdir == null, props:" + myWiz.getProperties());
+		}
+		dirF = FileUtil.normalizeFile(dirF);
+		String name = (String)myWiz.getProperty("name");			//NOI18N
+//		String mainClass = (String)myWiz.getProperty("mainClass");	//NOI18N
+		String librariesDefinition = (String)myWiz.getProperty("sharedLibraries");
+//		String librariesDefinition = (String)myWiz.getProperty(PanelOptionsVisual.SHARED_LIBRARIES);
+//		if (librariesDefinition != null) {
+//			if (!librariesDefinition.endsWith(File.separator)) {
+//				librariesDefinition += File.separatorChar;
+//			}
+//			librariesDefinition += SharableLibrariesUtils.DEFAULT_LIBRARIES_FILENAME;
+//		}
+		handle.progress (NbBundle.getMessage (NewVFIJ2SEProjectWizardIterator.class,
+				"LBL.NewJ2SEProjectWizardIterator_WizardProgress_CreatingProject"), 1);
+
+		//Creating the project with the dirs
+		File[] sourceFolders = (File[])myWiz.getProperty("sourceRoot");			//NOI18N
+		File[] testFolders = (File[])myWiz.getProperty("testRoot");				//NOI18N
+		String buildScriptName = (String) myWiz.getProperty(PROP_BUILD_SCRIPT_NAME);
+		String distFolder = (String) myWiz.getProperty(PROP_DIST_FOLDER);
+		AntProjectHelper h = new J2SEProjectBuilder(dirF, name)
+			.addSourceRoots(sourceFolders)
+			.addTestRoots(testFolders)
+			.skipTests(testFolders.length == 0)
+			.setManifest(MANIFEST_FILE)
+			.setLibrariesDefinitionFile(librariesDefinition)
+			.setBuildXmlName(buildScriptName)
+			.setDistFolder(distFolder)
+			.build();
+
+		handle.progress (2);
+		for (File f : sourceFolders) {
+			FileObject srcFo = FileUtil.toFileObject(f);
+			if (srcFo != null) {
+				resultSet.add (srcFo);
+			}
+		}
+		handle.progress (3);
+		handle.progress (NbBundle.getMessage (NewVFIJ2SEProjectWizardIterator.class,
+				"LBL.NewJ2SEProjectWizardIterator_WizardProgress_PreparingToOpen"), 4);
+		dirF = (dirF != null) ? dirF.getParentFile() : null;
+		if (dirF != null && dirF.exists()) {
+			ProjectChooser.setProjectsFolder (dirF);
+		}
+
+		return resultSet;
 	}
 }
