@@ -63,34 +63,59 @@ public final class NewVFIJ2SEProjectWizardIterator
 	public void initialize(WizardDescriptor wizard) {
 		this.wiz=wiz;
 		index=0;
-		//set the default values of the sourceRoot and the testRoot properties
-		this.wiz.putProperty("sourceRoot", new File[0]);    //NOI18N
-		this.wiz.putProperty("testRoot", new File[0]);      //NOI18N
-	}
-
-	private List<WizardDescriptor.Panel<WizardDescriptor>> getPanels() {
-		if (panels == null) {
-			panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
-			panels.add(new NewVFIJ2SEProjectWizardPanel1());
-			panels.add(new NewVFIJ2SEProjectWizardPanel2());
-			String[] steps = new String[panels.size()];
-			for (int i = 0; i < panels.size(); i++) {
-				Component c = panels.get(i).getComponent();
-				// Default step name to component name of panel.
+		panels = createPanels();
+		String[] steps = createSteps();
+		for (int i = 0; i < panels.size(); i++) {
+			Component c = panels.get(i).getComponent();
+			if (steps[i] == null){
 				steps[i] = c.getName();
-				if (c instanceof JComponent) { // assume Swing components
-					JComponent jc = (JComponent) c;
-					jc.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, i);
-					jc.putClientProperty(WizardDescriptor.PROP_CONTENT_DATA, steps);
-					jc.putClientProperty(WizardDescriptor.PROP_AUTO_WIZARD_STYLE, true);
-					jc.putClientProperty(WizardDescriptor.PROP_CONTENT_DISPLAYED, true);
-					jc.putClientProperty(WizardDescriptor.PROP_CONTENT_NUMBERED, true);
-				}
+			}
+			//Check if is really needed if no swing components delete
+			if (c instanceof JComponent) {
+				JComponent jc = (JComponent)c;
+				jc.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, i);
+				jc.putClientProperty(WizardDescriptor.PROP_CONTENT_DATA, steps);
 			}
 		}
+		//set the default values of the sourceRoot and the testRoot properties
+		this.wiz.putProperty("sourceRoot", new File[0]);	//NOI18N
+		this.wiz.putProperty("testRoot", new File[0]);		//NOI18N
+	}
+
+	private List<WizardDescriptor.Panel<WizardDescriptor>> createPanels() {
+		panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
+		panels.add(new NewVFIJ2SEProjectWizardPanel1());
+		panels.add(new NewVFIJ2SEProjectWizardPanel2());
+//		if (panels == null) {
+//			panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
+//			panels.add(new NewVFIJ2SEProjectWizardPanel1());
+//			panels.add(new NewVFIJ2SEProjectWizardPanel2());
+//			String[] steps = new String[panels.size()];
+//			for (int i = 0; i < panels.size(); i++) {
+//				Component c = panels.get(i).getComponent();
+//				// Default step name to component name of panel.
+//				steps[i] = c.getName();
+//				if (c instanceof JComponent) { // assume Swing components
+//					JComponent jc = (JComponent) c;
+//					jc.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, i);
+//					jc.putClientProperty(WizardDescriptor.PROP_CONTENT_DATA, steps);
+//					jc.putClientProperty(WizardDescriptor.PROP_AUTO_WIZARD_STYLE, true);
+//					jc.putClientProperty(WizardDescriptor.PROP_CONTENT_DISPLAYED, true);
+//					jc.putClientProperty(WizardDescriptor.PROP_CONTENT_NUMBERED, true);
+//				}
+//			}
+//		}
 		return panels;
 	}
 
+	private String[] createSteps() {
+		return new String[] {
+			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LAB_ConfigureProject"),
+			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LAB_ConfigureSourceRoots"),
+		};
+	}
+
+	// <editor-fold defaultstate="collapsed" desc="Generated Code">
 	@Override
 	public WizardDescriptor.Panel<WizardDescriptor> current() {
 		return panels.get(index);
@@ -99,12 +124,12 @@ public final class NewVFIJ2SEProjectWizardIterator
 	@Override
 	public String name() {
 		return NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class, "M_OF_N",
-				index + 1, panels.size());//index + 1 + ". from " + getPanels().size();
+				index + 1, panels.size());
 	}
 
 	@Override
 	public boolean hasNext() {
-		return index < getPanels().size() - 1;
+		return index < panels.size() - 1;
 	}
 
 	@Override
@@ -128,28 +153,12 @@ public final class NewVFIJ2SEProjectWizardIterator
 		index--;
 	}
 
-	// If nothing unusual changes in the middle of the wizard, simply:
 	@Override
 	public void addChangeListener(ChangeListener l) {
 	}
 
 	@Override
 	public void removeChangeListener(ChangeListener l) {
-	}
-	// If something changes dynamically (besides moving between panels), e.g.
-	// the number of panels changes in response to user input, then use
-	// ChangeSupport to implement add/removeChangeListener and call fireChange
-	// when needed
-
-	@Override
-	public Set instantiate(ProgressHandle handle) throws IOException {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public Set instantiate() throws IOException {
-		assert false : "Cannot call this method if implements WizardDescriptor.ProgressInstantiatingIterator.";
-		return null;
 	}
 
 	@Override
@@ -158,4 +167,14 @@ public final class NewVFIJ2SEProjectWizardIterator
 		this.panels = null;
 	}
 
+	@Override
+	public Set instantiate() throws IOException {
+		assert false : "Cannot call this method if implements WizardDescriptor.ProgressInstantiatingIterator.";
+		return null;
+	}//</editor-fold>
+
+	@Override
+	public Set instantiate(ProgressHandle handle) throws IOException {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 }
