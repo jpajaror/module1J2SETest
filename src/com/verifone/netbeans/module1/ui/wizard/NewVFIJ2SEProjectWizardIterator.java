@@ -15,6 +15,7 @@
 package com.verifone.netbeans.module1.ui.wizard;
 
 import java.awt.Component;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +56,17 @@ public final class NewVFIJ2SEProjectWizardIterator
 	//     };
 	// }
 	private int index;
-
 	private List<WizardDescriptor.Panel<WizardDescriptor>> panels;
+	private transient volatile WizardDescriptor wiz;
+
+	@Override
+	public void initialize(WizardDescriptor wizard) {
+		this.wiz=wiz;
+		index=0;
+		//set the default values of the sourceRoot and the testRoot properties
+		this.wiz.putProperty("sourceRoot", new File[0]);    //NOI18N
+		this.wiz.putProperty("testRoot", new File[0]);      //NOI18N
+	}
 
 	private List<WizardDescriptor.Panel<WizardDescriptor>> getPanels() {
 		if (panels == null) {
@@ -83,12 +93,13 @@ public final class NewVFIJ2SEProjectWizardIterator
 
 	@Override
 	public WizardDescriptor.Panel<WizardDescriptor> current() {
-		return getPanels().get(index);
+		return panels.get(index);
 	}
 
 	@Override
 	public String name() {
-		return index + 1 + ". from " + getPanels().size();
+		return NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class, "M_OF_N",
+				index + 1, panels.size());//index + 1 + ". from " + getPanels().size();
 	}
 
 	@Override
@@ -137,17 +148,14 @@ public final class NewVFIJ2SEProjectWizardIterator
 
 	@Override
 	public Set instantiate() throws IOException {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public void initialize(WizardDescriptor wizard) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		assert false : "Cannot call this method if implements WizardDescriptor.ProgressInstantiatingIterator.";
+		return null;
 	}
 
 	@Override
 	public void uninitialize(WizardDescriptor wizard) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		this.wiz = null;
+		this.panels = null;
 	}
 
 }
