@@ -12,7 +12,7 @@
  * whole or in part, without the prior written consent of VeriFone Inc.,
  * except in the manner described in the documentation.
  */
-package com.verifone.netbeans.module1.wizard;
+package com.verifone.netbeans.module1.ui.wizard;
 
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;

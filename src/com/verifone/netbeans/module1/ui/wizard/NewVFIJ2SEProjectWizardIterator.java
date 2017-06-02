@@ -12,7 +12,7 @@
  * whole or in part, without the prior written consent of VeriFone Inc.,
  * except in the manner described in the documentation.
  */
-package com.verifone.netbeans.module1.wizard;
+package com.verifone.netbeans.module1.ui.wizard;
 
 import java.awt.Component;
 import java.util.ArrayList;
@@ -20,8 +20,16 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
+import org.netbeans.api.templates.TemplateRegistration;
 import org.openide.WizardDescriptor;
+import org.openide.util.NbBundle;
 
+@TemplateRegistration(folder = "Project/Verifone",
+					  displayName = "#Template_displayName",
+//					  description = "TemplateDescription.html",
+					  iconBase = "com/verifone/netbeans/module1/ui/resource/VFIIcon.png")//,
+//					  content = "TemplateProject.zip")
+@NbBundle.Messages("Template_displayName=Verifone Project from existing component")
 public final class NewVFIJ2SEProjectWizardIterator implements WizardDescriptor.Iterator<WizardDescriptor> {
 
 	// Example of invoking this wizard:

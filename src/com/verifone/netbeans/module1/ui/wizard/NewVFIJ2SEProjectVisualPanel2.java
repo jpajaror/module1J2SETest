@@ -1,5 +1,5 @@
 /*
- * NewVFIJ2SEProjectVisualPanel1.java
+ * NewVFIJ2SEProjectVisualPanel2.java
  * Created by: JoswillP1
  *
  * COPYRIGHT (c) 2017 by VeriFone Inc., All Rights Reserved.
@@ -12,22 +12,22 @@
  * whole or in part, without the prior written consent of VeriFone Inc.,
  * except in the manner described in the documentation.
  */
-package com.verifone.netbeans.module1.wizard;
+package com.verifone.netbeans.module1.ui.wizard;
 
 import javax.swing.JPanel;
 
-public final class NewVFIJ2SEProjectVisualPanel1 extends JPanel {
+public final class NewVFIJ2SEProjectVisualPanel2 extends JPanel {
 
 	/**
-	 * Creates new form NewVFIJ2SEProjectVisualPanel1
+	 * Creates new form NewVFIJ2SEProjectVisualPanel2
 	 */
-	public NewVFIJ2SEProjectVisualPanel1() {
+	public NewVFIJ2SEProjectVisualPanel2() {
 		initComponents();
 	}
 
 	@Override
 	public String getName() {
-		return "Step #1";
+		return "Step #2";
 	}
 
 	/**
