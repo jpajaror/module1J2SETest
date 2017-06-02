@@ -25,11 +25,11 @@ import org.openide.WizardDescriptor;
 import org.openide.util.NbBundle;
 
 @TemplateRegistration(folder = "Project/Verifone",
-					  displayName = "#Template_displayName",
-//					  description = "TemplateDescription.html",
-					  iconBase = "com/verifone/netbeans/module1/ui/resource/VFIIcon.png")//,
-//					  content = "TemplateProject.zip")
-@NbBundle.Messages("Template_displayName=Verifone Project from existing component")
+					  position=100,
+					  displayName = "#template_existing",
+					  description = "../resources/existingProject.html",
+					  iconBase = "com/verifone/netbeans/module1/ui/resources/VFIIcon.png")
+@NbBundle.Messages("template_existing=Verifone Project from existing component")
 public final class NewVFIJ2SEProjectWizardIterator implements WizardDescriptor.Iterator<WizardDescriptor> {
 
 	// Example of invoking this wizard:
