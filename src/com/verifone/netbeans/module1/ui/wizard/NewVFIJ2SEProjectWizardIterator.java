@@ -15,11 +15,14 @@
 package com.verifone.netbeans.module1.ui.wizard;
 
 import java.awt.Component;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
+import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.templates.TemplateRegistration;
 import org.openide.WizardDescriptor;
 import org.openide.util.NbBundle;
@@ -30,7 +33,8 @@ import org.openide.util.NbBundle;
 					  description = "../resources/existingProject.html",
 					  iconBase = "com/verifone/netbeans/module1/ui/resources/VFIIcon.png")
 @NbBundle.Messages("template_existing=Verifone Project from existing component")
-public final class NewVFIJ2SEProjectWizardIterator implements WizardDescriptor.Iterator<WizardDescriptor> {
+public final class NewVFIJ2SEProjectWizardIterator
+		implements WizardDescriptor.ProgressInstantiatingIterator<WizardDescriptor> {
 
 	// Example of invoking this wizard:
 	// @ActionID(category="...", id="...")
@@ -125,5 +129,25 @@ public final class NewVFIJ2SEProjectWizardIterator implements WizardDescriptor.I
 	// the number of panels changes in response to user input, then use
 	// ChangeSupport to implement add/removeChangeListener and call fireChange
 	// when needed
+
+	@Override
+	public Set instantiate(ProgressHandle handle) throws IOException {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public Set instantiate() throws IOException {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void initialize(WizardDescriptor wizard) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void uninitialize(WizardDescriptor wizard) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 
 }
