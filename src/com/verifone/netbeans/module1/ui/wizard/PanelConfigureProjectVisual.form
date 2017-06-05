@@ -29,7 +29,7 @@
                   <Component id="componentFolder" alignment="1" max="32767" attributes="0"/>
                   <Component id="createdFolderTextField" alignment="1" max="32767" attributes="0"/>
                   <Component id="projectLocationTextField" alignment="1" max="32767" attributes="0"/>
-                  <Component id="projectNameTextField" alignment="1" pref="156" max="32767" attributes="0"/>
+                  <Component id="projectNameTextField" alignment="1" pref="402" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
@@ -151,6 +151,9 @@
         </Property>
         <Property name="actionCommand" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="com/verifone/netbeans/module1/ui/wizard/Bundle.properties" key="PanelConfigureProjectVisual.browseComponentButton.actionCommand" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+        </Property>
+        <Property name="label" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="com/verifone/netbeans/module1/ui/wizard/Bundle.properties" key="PanelConfigureProjectVisual.browseComponentButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>

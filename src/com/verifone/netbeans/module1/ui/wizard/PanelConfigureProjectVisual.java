@@ -16,7 +16,9 @@ package com.verifone.netbeans.module1.ui.wizard;
 
 import java.io.File;
 import javax.swing.JFileChooser;
+import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
 import org.openide.WizardDescriptor;
 import org.openide.WizardValidationException;
 import org.openide.filesystems.FileUtil;
@@ -88,6 +90,7 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 
         org.openide.awt.Mnemonics.setLocalizedText(browseComponentButton, org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.browseComponentButton.text")); // NOI18N
         browseComponentButton.setActionCommand(org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.browseComponentButton.actionCommand")); // NOI18N
+        browseComponentButton.setLabel(org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.browseComponentButton.text")); // NOI18N
         browseComponentButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 browseComponentButtonActionPerformed(evt);
@@ -110,7 +113,7 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
                     .addComponent(componentFolder, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(createdFolderTextField, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(projectLocationTextField, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(projectNameTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE))
+                    .addComponent(projectNameTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(browseButton)
@@ -219,5 +222,31 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 	@Override
 	void validate(WizardDescriptor settings) throws WizardValidationException {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void insertUpdate(DocumentEvent e) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void changedUpdate(DocumentEvent e) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	private void updateTexts (DocumentEvent e) {
+		Document doc = e.getDocument();
+		if (doc == projectNameTextField.getDocument() ||
+			doc == projectLocationTextField.getDocument()) {
+			String projectName = projectNameTextField.getText();
+			String projectFolder = projectLocationTextField.getText();
+			createdFolderTextField.setText(projectFolder + File.separatorChar + projectName);
+		}
+		panel.fireChangeEvent(); // Notify that the panel changed
 	}
 }
