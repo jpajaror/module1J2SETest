@@ -14,6 +14,9 @@
  */
 package com.verifone.netbeans.module1.ui.wizard;
 
+import java.util.HashSet;
+import java.util.Set;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
@@ -25,6 +28,7 @@ public class NewVFIJ2SEProjectWizardPanel1 implements WizardDescriptor.Panel<Wiz
 	 * component from this class, just use getComponent().
 	 */
 	private NewVFIJ2SEProjectVisualPanel1 component;
+	private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
 
 	// Get the visual component for the panel. In this template, the component
 	// is kept separate. This can be more efficient: if the wizard is created
@@ -33,7 +37,7 @@ public class NewVFIJ2SEProjectWizardPanel1 implements WizardDescriptor.Panel<Wiz
 	@Override
 	public NewVFIJ2SEProjectVisualPanel1 getComponent() {
 		if (component == null) {
-			component = new NewVFIJ2SEProjectVisualPanel1();
+			component = new NewVFIJ2SEProjectVisualPanel1(this);
 		}
 		return component;
 	}
@@ -74,4 +78,15 @@ public class NewVFIJ2SEProjectWizardPanel1 implements WizardDescriptor.Panel<Wiz
 		// use wiz.putProperty to remember current panel state
 	}
 
+
+	protected final void fireChangeEvent() {
+		Set<ChangeListener> ls;
+		synchronized (listeners) {
+			ls = new HashSet<ChangeListener>(listeners);
+		}
+		ChangeEvent ev = new ChangeEvent(this);
+		for (ChangeListener l : ls) {
+			l.stateChanged(ev);
+		}
+	}
 }

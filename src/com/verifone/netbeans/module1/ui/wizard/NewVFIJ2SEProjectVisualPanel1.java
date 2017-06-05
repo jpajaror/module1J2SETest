@@ -16,21 +16,25 @@ package com.verifone.netbeans.module1.ui.wizard;
 
 import java.io.File;
 import javax.swing.JFileChooser;
-import javax.swing.JPanel;
+import org.openide.WizardDescriptor;
+import org.openide.WizardValidationException;
 import org.openide.filesystems.FileUtil;
+import org.openide.util.NbBundle;
 
-public final class NewVFIJ2SEProjectVisualPanel1 extends JPanel {
+public final class NewVFIJ2SEProjectVisualPanel1 extends SettingsPanel {
 
 	public static final String PROP_PROJECT_NAME = "projectName";
 
-	private NewVFIJ2SEProjectVisualPanel1 panel;
+	private NewVFIJ2SEProjectWizardPanel1 panel;
 
 	/**
 	 * Creates new form NewVFIJ2SEProjectVisualPanel1
 	 */
-	public NewVFIJ2SEProjectVisualPanel1(NewVFIJ2SEProjectVisualPanel1 panel) {
-		initComponents();
+	public NewVFIJ2SEProjectVisualPanel1(NewVFIJ2SEProjectWizardPanel1 panel) {
 		this.panel = panel;
+		initComponents();
+		setName(NbBundle.getMessage(NewVFIJ2SEProjectVisualPanel1.class,
+				"title.NAME_AND_LOCATION"));
 	}
 
 	@Override
@@ -192,4 +196,24 @@ public final class NewVFIJ2SEProjectVisualPanel1 extends JPanel {
     private javax.swing.JLabel projectNameLabel;
     private javax.swing.JTextField projectNameTextField;
     // End of variables declaration//GEN-END:variables
+
+	@Override
+	void store(WizardDescriptor settings) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	void read(WizardDescriptor settings) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	boolean valid(WizardDescriptor settings) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	void validate(WizardDescriptor settings) throws WizardValidationException {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 }
