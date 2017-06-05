@@ -95,7 +95,7 @@ public final class NewVFIJ2SEProjectWizardIterator
 
 	private List<WizardDescriptor.Panel<WizardDescriptor>> createPanels() {
 		panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
-		panels.add(new NewVFIJ2SEProjectWizardPanel1());
+		panels.add(new PanelConfigureProject());
 		panels.add(new NewVFIJ2SEProjectWizardPanel2());
 //TODO: Clean
 //		if (panels == null) {

@@ -21,13 +21,13 @@ import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 
-public class NewVFIJ2SEProjectWizardPanel1 implements WizardDescriptor.Panel<WizardDescriptor> {
+public class PanelConfigureProject implements WizardDescriptor.Panel<WizardDescriptor> {
 
 	/**
 	 * The visual component that displays this panel. If you need to access the
 	 * component from this class, just use getComponent().
 	 */
-	private NewVFIJ2SEProjectVisualPanel1 component;
+	private PanelConfigureProjectVisual component;
 	private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
 
 	// Get the visual component for the panel. In this template, the component
@@ -35,9 +35,9 @@ public class NewVFIJ2SEProjectWizardPanel1 implements WizardDescriptor.Panel<Wiz
 	// but never displayed, or not all panels are displayed, it is better to
 	// create only those which really need to be visible.
 	@Override
-	public NewVFIJ2SEProjectVisualPanel1 getComponent() {
+	public PanelConfigureProjectVisual getComponent() {
 		if (component == null) {
-			component = new NewVFIJ2SEProjectVisualPanel1(this);
+			component = new PanelConfigureProjectVisual(this);
 		}
 		return component;
 	}

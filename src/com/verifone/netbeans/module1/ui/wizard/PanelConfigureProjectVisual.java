@@ -16,24 +16,26 @@ package com.verifone.netbeans.module1.ui.wizard;
 
 import java.io.File;
 import javax.swing.JFileChooser;
+import javax.swing.event.DocumentListener;
 import org.openide.WizardDescriptor;
 import org.openide.WizardValidationException;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle;
 
-public final class NewVFIJ2SEProjectVisualPanel1 extends SettingsPanel {
+public final class PanelConfigureProjectVisual extends SettingsPanel
+		implements DocumentListener {
 
 	public static final String PROP_PROJECT_NAME = "projectName";
 
-	private NewVFIJ2SEProjectWizardPanel1 panel;
+	private PanelConfigureProject panel;
 
 	/**
 	 * Creates new form NewVFIJ2SEProjectVisualPanel1
 	 */
-	public NewVFIJ2SEProjectVisualPanel1(NewVFIJ2SEProjectWizardPanel1 panel) {
+	public PanelConfigureProjectVisual(PanelConfigureProject panel) {
 		this.panel = panel;
 		initComponents();
-		setName(NbBundle.getMessage(NewVFIJ2SEProjectVisualPanel1.class,
+		setName(NbBundle.getMessage(PanelConfigureProjectVisual.class,
 				"title.NAME_AND_LOCATION"));
 	}
 
@@ -61,31 +63,31 @@ public final class NewVFIJ2SEProjectVisualPanel1 extends SettingsPanel {
         componentFolder = new javax.swing.JTextField();
         browseComponentButton = new javax.swing.JButton();
 
-        org.openide.awt.Mnemonics.setLocalizedText(projectNameLabel, org.openide.util.NbBundle.getMessage(NewVFIJ2SEProjectVisualPanel1.class, "NewVFIJ2SEProjectVisualPanel1.projectNameLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(projectNameLabel, org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.projectNameLabel.text")); // NOI18N
 
         projectNameTextField.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
-        org.openide.awt.Mnemonics.setLocalizedText(projectLocationLabel, org.openide.util.NbBundle.getMessage(NewVFIJ2SEProjectVisualPanel1.class, "NewVFIJ2SEProjectVisualPanel1.projectLocationLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(projectLocationLabel, org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.projectLocationLabel.text")); // NOI18N
 
         projectLocationTextField.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
-        org.openide.awt.Mnemonics.setLocalizedText(browseButton, org.openide.util.NbBundle.getMessage(NewVFIJ2SEProjectVisualPanel1.class, "NewVFIJ2SEProjectVisualPanel1.browseButton.text")); // NOI18N
-        browseButton.setActionCommand(org.openide.util.NbBundle.getMessage(NewVFIJ2SEProjectVisualPanel1.class, "NewVFIJ2SEProjectVisualPanel1.browseButton.actionCommand")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(browseButton, org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.browseButton.text")); // NOI18N
+        browseButton.setActionCommand(org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.browseButton.actionCommand")); // NOI18N
         browseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 browseButtonActionPerformed(evt);
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(createdFolderLabel, org.openide.util.NbBundle.getMessage(NewVFIJ2SEProjectVisualPanel1.class, "NewVFIJ2SEProjectVisualPanel1.createdFolderLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(createdFolderLabel, org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.createdFolderLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(componentFolderLabel, org.openide.util.NbBundle.getMessage(NewVFIJ2SEProjectVisualPanel1.class, "NewVFIJ2SEProjectVisualPanel1.componentFolderLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(componentFolderLabel, org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.componentFolderLabel.text")); // NOI18N
 
-        componentFolder.setText(org.openide.util.NbBundle.getMessage(NewVFIJ2SEProjectVisualPanel1.class, "NewVFIJ2SEProjectVisualPanel1.componentFolder.text")); // NOI18N
+        componentFolder.setText(org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.componentFolder.text")); // NOI18N
         componentFolder.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
-        org.openide.awt.Mnemonics.setLocalizedText(browseComponentButton, org.openide.util.NbBundle.getMessage(NewVFIJ2SEProjectVisualPanel1.class, "NewVFIJ2SEProjectVisualPanel1.browseComponentButton.text")); // NOI18N
-        browseComponentButton.setActionCommand(org.openide.util.NbBundle.getMessage(NewVFIJ2SEProjectVisualPanel1.class, "NewVFIJ2SEProjectVisualPanel1.browseComponentButton.actionCommand")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(browseComponentButton, org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.browseComponentButton.text")); // NOI18N
+        browseComponentButton.setActionCommand(org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.browseComponentButton.actionCommand")); // NOI18N
         browseComponentButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 browseComponentButtonActionPerformed(evt);
@@ -141,47 +143,49 @@ public final class NewVFIJ2SEProjectVisualPanel1 extends SettingsPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseButtonActionPerformed
-        String command = evt.getActionCommand();
-        if ("BROWSE".equals(command)) {
-            JFileChooser chooser = new JFileChooser();
-            FileUtil.preventFileChooserSymlinkTraversal(chooser, null);
-            chooser.setDialogTitle("Select Project Location");
-            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            String path = this.projectLocationTextField.getText();
-            if (path.length() > 0) {
-                File f = new File(path);
-                if (f.exists()) {
-                    chooser.setSelectedFile(f);
-                }
-            }
-            if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog(this)) {
-                File projectDir = chooser.getSelectedFile();
-                projectLocationTextField.setText(FileUtil.normalizeFile(projectDir).getAbsolutePath());
-            }
-            panel.fireChangeEvent();
-        }
+		String command = evt.getActionCommand();
+		if ("BROWSE".equals(command)) {
+			JFileChooser chooser = new JFileChooser();
+			FileUtil.preventFileChooserSymlinkTraversal(chooser, null);
+			chooser.setDialogTitle(NbBundle.getMessage(
+					PanelConfigureProjectVisual.class, "title.SelProjLoc"));
+			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			String path = this.projectLocationTextField.getText();
+			if (path.length() > 0) {
+				File f = new File(path);
+				if (f.exists()) {
+					chooser.setSelectedFile(f);
+				}
+			}
+			if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog(this)) {
+				File projectDir = chooser.getSelectedFile();
+				projectLocationTextField.setText(FileUtil.normalizeFile(projectDir).getAbsolutePath());
+			}
+			panel.fireChangeEvent();
+		}
     }//GEN-LAST:event_browseButtonActionPerformed
 
     private void browseComponentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseComponentButtonActionPerformed
-        String command = evt.getActionCommand();
-        if ("BROWSE".equals(command)) {
-            JFileChooser chooser = new JFileChooser();
-            FileUtil.preventFileChooserSymlinkTraversal(chooser, null);
-            chooser.setDialogTitle("Select Component Location");
-            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            String path = this.componentFolder.getText();
-            if (path.length() > 0) {
-                File f = new File(path);
-                if (f.exists()) {
-                    chooser.setSelectedFile(f);
-                }
-            }
-            if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog(this)) {
-                File projectDir = chooser.getSelectedFile();
-                componentFolder.setText(FileUtil.normalizeFile(projectDir).getAbsolutePath());
-            }
-            panel.fireChangeEvent();
-        }
+		String command = evt.getActionCommand();
+		if ("BROWSE".equals(command)) {
+			JFileChooser chooser = new JFileChooser();
+			FileUtil.preventFileChooserSymlinkTraversal(chooser, null);
+			chooser.setDialogTitle(NbBundle.getMessage(
+					PanelConfigureProjectVisual.class, "title.SelCompLoc"));
+			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			String path = this.componentFolder.getText();
+			if (path.length() > 0) {
+				File f = new File(path);
+				if (f.exists()) {
+					chooser.setSelectedFile(f);
+				}
+			}
+			if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog(this)) {
+				File projectDir = chooser.getSelectedFile();
+				componentFolder.setText(FileUtil.normalizeFile(projectDir).getAbsolutePath());
+			}
+			panel.fireChangeEvent();
+		}
     }//GEN-LAST:event_browseComponentButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
