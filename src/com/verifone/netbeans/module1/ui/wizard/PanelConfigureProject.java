@@ -19,14 +19,18 @@ import java.util.Set;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
+import org.openide.WizardValidationException;
 import org.openide.util.HelpCtx;
 
-public class PanelConfigureProject implements WizardDescriptor.Panel<WizardDescriptor> {
+public class PanelConfigureProject implements WizardDescriptor.Panel<WizardDescriptor>,
+		WizardDescriptor.ValidatingPanel<WizardDescriptor>,
+		WizardDescriptor.FinishablePanel<WizardDescriptor> {
 
 	/**
 	 * The visual component that displays this panel. If you need to access the
 	 * component from this class, just use getComponent().
 	 */
+	private WizardDescriptor descriptor;
 	private PanelConfigureProjectVisual component;
 	private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
 
@@ -45,7 +49,7 @@ public class PanelConfigureProject implements WizardDescriptor.Panel<WizardDescr
 	@Override
 	public HelpCtx getHelp() {
 		// Show no Help button for this panel:
-		return HelpCtx.DEFAULT_HELP;
+		return new HelpCtx(PanelConfigureProject.class.getName());
 		// If you have context help:
 		// return new HelpCtx("help.key.here");
 	}
@@ -53,7 +57,8 @@ public class PanelConfigureProject implements WizardDescriptor.Panel<WizardDescr
 	@Override
 	public boolean isValid() {
 		// If it is always OK to press Next or Finish, then:
-		return true;
+		getComponent();
+		return component.valid(descriptor);
 		// If it depends on some condition (form filled out...) and
 		// this condition changes (last form field filled in...) then
 		// use ChangeSupport to implement add/removeChangeListener below.
@@ -62,22 +67,29 @@ public class PanelConfigureProject implements WizardDescriptor.Panel<WizardDescr
 
 	@Override
 	public void addChangeListener(ChangeListener l) {
+		synchronized (listeners) {
+			listeners.add(l);
+		}
 	}
 
 	@Override
 	public void removeChangeListener(ChangeListener l) {
+		synchronized (listeners) {
+			listeners.remove(l);
+		}
 	}
 
 	@Override
-	public void readSettings(WizardDescriptor wiz) {
-		// use wiz.getProperty to retrieve previous panel state
+	public void readSettings(WizardDescriptor settings) {
+		descriptor = (WizardDescriptor) settings;
+		component.read(descriptor);
 	}
 
 	@Override
-	public void storeSettings(WizardDescriptor wiz) {
-		// use wiz.putProperty to remember current panel state
+	public void storeSettings(WizardDescriptor settings) {
+		WizardDescriptor d = (WizardDescriptor) settings;
+		component.store(d);
 	}
-
 
 	protected final void fireChangeEvent() {
 		Set<ChangeListener> ls;
@@ -88,5 +100,16 @@ public class PanelConfigureProject implements WizardDescriptor.Panel<WizardDescr
 		for (ChangeListener l : ls) {
 			l.stateChanged(ev);
 		}
+	}
+
+	@Override
+	public void validate() throws WizardValidationException {
+		getComponent();
+		component.validate(descriptor);
+	}
+
+	@Override
+	public boolean isFinishPanel() {
+		return true;
 	}
 }

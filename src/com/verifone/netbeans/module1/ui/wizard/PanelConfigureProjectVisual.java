@@ -14,20 +14,25 @@
  */
 package com.verifone.netbeans.module1.ui.wizard;
 
+import com.verifone.netbeans.module1.component.ComponentDefinition;
 import java.io.File;
+import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
+import org.netbeans.spi.project.ui.support.ProjectChooser;
 import org.openide.WizardDescriptor;
 import org.openide.WizardValidationException;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle;
+import org.openide.util.Utilities;
 
 public final class PanelConfigureProjectVisual extends SettingsPanel
 		implements DocumentListener {
 
-	public static final String PROP_PROJECT_NAME = "projectName";
+	public static final String PROP_PROJECT_NAME = "projectName";			//NOI18N
+	public static final String PROP_PROJECT_LOCATION = "projectLocation";	//NOI18N
 
 	private PanelConfigureProject panel;
 
@@ -85,7 +90,6 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 
         org.openide.awt.Mnemonics.setLocalizedText(componentFolderLabel, org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.componentFolderLabel.text")); // NOI18N
 
-        componentFolder.setText(org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.componentFolder.text")); // NOI18N
         componentFolder.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         org.openide.awt.Mnemonics.setLocalizedText(browseComponentButton, org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.browseComponentButton.text")); // NOI18N
@@ -206,37 +210,147 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 
 	@Override
 	void store(WizardDescriptor settings) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		String name = projectNameTextField.getText().trim();
+		String folder = createdFolderTextField.getText().trim();
+		String compFolder = componentFolder.getText().trim();
+
+		settings.putProperty("projdir", new File(folder));	//NOI18N
+		settings.putProperty("name", name);					//NOI18N
+		try {
+			settings.putProperty("compdir", new ComponentDefinition(compFolder));
+		} catch (IOException ex) {
+			settings.putProperty("compdir", null);
+		}
 	}
 
 	@Override
 	void read(WizardDescriptor settings) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		File projectLocation = (File) settings.getProperty("projdir");
+		if (projectLocation == null || projectLocation.getParentFile() == null 
+				|| !projectLocation.getParentFile().isDirectory()) {
+			projectLocation = ProjectChooser.getProjectsFolder();
+		} else {
+			projectLocation = projectLocation.getParentFile();
+		}
+		this.projectLocationTextField.setText(projectLocation.getAbsolutePath());
+
+		String projectName = (String) settings.getProperty ("name"); //NOI18N
+		if (projectName == null) {
+			projectName = "isdApps-";
+		}
+		this.projectNameTextField.setText (projectName);
+		this.projectNameTextField.selectAll();
+
+		ComponentDefinition compLocation = (ComponentDefinition) settings.getProperty("compdir");
+		String strCompLoc;
+		if (compLocation != null) {
+			strCompLoc = compLocation.getDirectoryString();
+		} else {
+			strCompLoc = "C:\\gitrepos\\petroApps\\isdApps\\vsmsV2\\sys\\util";
+//			strCompLoc = "/Users/joswill/git/compTest";
+		}
+		this.componentFolder.setText(strCompLoc);
 	}
 
 	@Override
-	boolean valid(WizardDescriptor settings) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	boolean valid(WizardDescriptor descriptor) {
+		if (isIllegalName(projectNameTextField.getText())) {
+			descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE,
+				NbBundle.getMessage(PanelConfigureProjectVisual.class, "msg.InvalidProjName"));
+			return false;
+		}
+
+		File f = new File(projectLocationTextField.getText()).getAbsoluteFile();
+		if (getCanonicalFile(f) == null) {
+			String message = NbBundle.getMessage(PanelConfigureProjectVisual.class,
+					"msg.IllegalProjLoc");
+			descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, message);
+			return false;
+		}
+
+		// not allow to create project on unix root folder, see #82339
+		File cfl = getCanonicalFile(new File(createdFolderTextField.getText()));
+		if (Utilities.isUnix() && cfl != null && cfl.getParentFile().getParent() == null) {
+			String message = NbBundle.getMessage(PanelConfigureProjectVisual.class,
+					"msg.ProjInRootNotSupported");
+			descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, message);
+			return false;
+		}
+
+		final File destFolder = new File( createdFolderTextField.getText() ).getAbsoluteFile();
+		if (getCanonicalFile (destFolder) == null) {
+			String message = NbBundle.getMessage(PanelConfigureProjectVisual.class,
+					"msg.IllegalProjLoc");
+			descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, message);
+			return false;
+		}
+
+		File projLoc = FileUtil.normalizeFile(destFolder);
+		while (projLoc != null && !projLoc.exists()) {
+			projLoc = projLoc.getParentFile();
+		}
+		if (projLoc == null || !projLoc.canWrite()) {
+			String message = NbBundle.getMessage(PanelConfigureProjectVisual.class,
+					"msg.ProjFolderReadOnly");
+			descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, message);
+			return false;
+		}
+
+		try {
+			ComponentDefinition compDef = new ComponentDefinition(componentFolder.getText());
+			if (!compDef.validateComponentDef()) {
+				String message = NbBundle.getMessage(PanelConfigureProjectVisual.class,
+						"msg.InvalidCompDefXML");
+				descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, message);
+				return false;
+			}
+		} catch (IOException ex) {
+			String message = NbBundle.getMessage(PanelConfigureProjectVisual.class,
+					"msg.InvalidCompFolder");
+			descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, message);
+			return false;
+		}
+
+		descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, "");
+		return true;
 	}
 
 	@Override
 	void validate(WizardDescriptor settings) throws WizardValidationException {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		//Nothing to validate
 	}
 
 	@Override
 	public void insertUpdate(DocumentEvent e) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		updateTexts(e);
+		if (this.projectNameTextField.getDocument() == e.getDocument()) {
+			firePropertyChange(PROP_PROJECT_NAME, null, this.projectNameTextField.getText());
+		}
+		if (this.projectLocationTextField.getDocument() == e.getDocument()) {
+			firePropertyChange (PROP_PROJECT_LOCATION,null,this.projectLocationTextField.getText());
+		}
 	}
 
 	@Override
 	public void removeUpdate(DocumentEvent e) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		updateTexts(e);
+		if (this.projectNameTextField.getDocument() == e.getDocument()) {
+			firePropertyChange(PROP_PROJECT_NAME, null, this.projectNameTextField.getText());
+		}
+		if (this.projectLocationTextField.getDocument() == e.getDocument()) {
+			firePropertyChange (PROP_PROJECT_LOCATION,null,this.projectLocationTextField.getText());
+		}
 	}
 
 	@Override
 	public void changedUpdate(DocumentEvent e) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		updateTexts(e);
+		if (this.projectNameTextField.getDocument() == e.getDocument()) {
+			firePropertyChange(PROP_PROJECT_NAME, null, this.projectNameTextField.getText());
+		}
+		if (this.projectLocationTextField.getDocument() == e.getDocument()) {
+			firePropertyChange (PROP_PROJECT_LOCATION,null,this.projectLocationTextField.getText());
+		}
 	}
 
 	private void updateTexts (DocumentEvent e) {
@@ -248,5 +362,23 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 			createdFolderTextField.setText(projectFolder + File.separatorChar + projectName);
 		}
 		panel.fireChangeEvent(); // Notify that the panel changed
+	}
+
+	static File getCanonicalFile(File file) {
+		try {
+			return file.getCanonicalFile();
+		} catch (IOException e) {
+			return null;
+		}
+	}
+
+	static boolean isIllegalName(final String name) {
+		return name.length() == 0      || 
+			name.indexOf('/')  >= 0 ||        //NOI18N
+			name.indexOf('\\') >= 0 ||        //NOI18N
+			name.indexOf(':')  >= 0 ||        //NOI18N
+			name.indexOf("\"") >= 0 ||        //NOI18N
+			name.indexOf('<')  >= 0 ||        //NOI18N
+			name.indexOf('>')  >= 0;          //NOI18N
 	}
 }
