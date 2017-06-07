@@ -83,6 +83,24 @@ public class ComponentDefinition {
 		return dependencies;
 	}
 
+	public String getComponentName() throws IOException, SAXException,
+			XPathExpressionException{
+		String name="";
+
+		Document doc = XMLUtil.parse(new InputSource(
+				new FileInputStream(compDefF)), false, false, null, null);
+		XPath xPath = XPathFactory.newInstance().newXPath();
+		name = (String) xPath.evaluate("/componentDef/@name", doc,
+				XPathConstants.STRING);
+		if ((null == name) || (name.isEmpty())){
+			return null;
+		} else {
+			name = name.substring(1).replaceAll("/", ".");
+		}
+
+		return name;
+	}
+
 	public boolean hasSrcDir() {
 		String compDirSrc = compDirStr + "/src";
 		File srcDir = new File(compDirSrc);

@@ -21,12 +21,15 @@ import javax.swing.JFileChooser;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
+import javax.xml.xpath.XPathExpressionException;
 import org.netbeans.spi.project.ui.support.ProjectChooser;
 import org.openide.WizardDescriptor;
 import org.openide.WizardValidationException;
 import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.Utilities;
+import org.xml.sax.SAXException;
 
 public final class PanelConfigureProjectVisual extends SettingsPanel
 		implements DocumentListener {
@@ -129,22 +132,22 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(projectNameLabel)
-                    .addComponent(projectNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(componentFolderLabel)
+                    .addComponent(componentFolder, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(browseComponentButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(projectLocationLabel)
-                    .addComponent(projectLocationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(browseButton))
+                    .addComponent(projectNameLabel)
+                    .addComponent(projectNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(createdFolderLabel)
                     .addComponent(createdFolderTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(componentFolderLabel)
-                    .addComponent(componentFolder, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(browseComponentButton))
+                    .addComponent(projectLocationLabel)
+                    .addComponent(projectLocationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(browseButton))
                 .addContainerGap(166, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -214,8 +217,8 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 		String folder = createdFolderTextField.getText().trim();
 		String compFolder = componentFolder.getText().trim();
 
-		settings.putProperty("projdir", new File(folder));	//NOI18N
-		settings.putProperty("name", name);					//NOI18N
+		settings.putProperty("projdir", new File(folder));		//NOI18N
+		settings.putProperty("name", name);						//NOI18N
 		try {
 			settings.putProperty("compdir", new ComponentDefinition(compFolder));
 		} catch (IOException ex) {
@@ -317,7 +320,22 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 
 	@Override
 	void validate(WizardDescriptor settings) throws WizardValidationException {
-		//Nothing to validate
+		String compStrFolder=componentFolder.getText();
+		try {
+			ComponentDefinition compDef = new ComponentDefinition(compStrFolder);
+			if (compDef.validateComponentDef()){
+				String compDefName=compDef.getComponentName();
+				projectNameTextField.setText(compDefName);
+			}
+		} catch (IOException ex) {
+			throw new WizardValidationException(this, ex.getMessage(),
+					NbBundle.getMessage(PanelConfigureProjectVisual.class,
+					"msg.InvalidCompFolder"));
+		} catch (SAXException|XPathExpressionException ex) {
+			throw new WizardValidationException(this, ex.getMessage(),
+					NbBundle.getMessage(PanelConfigureProjectVisual.class,
+					"msg.InvalidCompDefXML"));
+		}
 	}
 
 	@Override
