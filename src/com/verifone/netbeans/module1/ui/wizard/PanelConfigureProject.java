@@ -23,8 +23,7 @@ import org.openide.WizardValidationException;
 import org.openide.util.HelpCtx;
 
 public class PanelConfigureProject implements WizardDescriptor.Panel<WizardDescriptor>,
-		WizardDescriptor.ValidatingPanel<WizardDescriptor>,
-		WizardDescriptor.FinishablePanel<WizardDescriptor> {
+		WizardDescriptor.ValidatingPanel<WizardDescriptor> {
 
 	/**
 	 * The visual component that displays this panel. If you need to access the
@@ -106,10 +105,5 @@ public class PanelConfigureProject implements WizardDescriptor.Panel<WizardDescr
 	public void validate() throws WizardValidationException {
 		getComponent();
 		component.validate(descriptor);
-	}
-
-	@Override
-	public boolean isFinishPanel() {
-		return true;
 	}
 }
