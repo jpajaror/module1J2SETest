@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.WizardValidationException;
+import org.openide.util.ChangeSupport;
 import org.openide.util.HelpCtx;
 
 /**
@@ -22,7 +23,7 @@ public class PanelExistingComponent implements WizardDescriptor.Panel<WizardDesc
 
 	private WizardDescriptor descriptor;
 	PanelExistingComponentVisual component;
-	private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
+	private final ChangeSupport changeSupport = new ChangeSupport(this);
 
 	@Override
 	public Component getComponent() {
@@ -56,22 +57,22 @@ public class PanelExistingComponent implements WizardDescriptor.Panel<WizardDesc
 	}
 
 	@Override
+	public void validate() throws WizardValidationException {
+		getComponent();
+		component.validate(descriptor);
+	}
+
+	@Override
 	public void addChangeListener(ChangeListener l) {
-		synchronized (listeners) {
-			listeners.add(l);
-		}
+		changeSupport.addChangeListener(l);
 	}
 
 	@Override
 	public void removeChangeListener(ChangeListener l) {
-		synchronized (listeners) {
-			listeners.remove(l);
-		}
+		changeSupport.removeChangeListener(l);
 	}
 
-	@Override
-	public void validate() throws WizardValidationException {
-		getComponent();
-		component.validate(descriptor);
+	protected final void fireChangeEvent() {
+		changeSupport.fireChange();
 	}
 }

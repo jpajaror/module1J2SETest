@@ -71,7 +71,6 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
         createdFolderTextField = new javax.swing.JTextField();
         componentFolderLabel = new javax.swing.JLabel();
         componentFolder = new javax.swing.JTextField();
-        browseComponentButton = new javax.swing.JButton();
 
         org.openide.awt.Mnemonics.setLocalizedText(projectNameLabel, org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.projectNameLabel.text")); // NOI18N
 
@@ -82,7 +81,7 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
         projectLocationTextField.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         org.openide.awt.Mnemonics.setLocalizedText(browseButton, org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.browseButton.text")); // NOI18N
-        browseButton.setActionCommand(org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.browseButton.actionCommand")); // NOI18N
+        browseButton.setActionCommand("BROWSE"); // NOI18N
         browseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 browseButtonActionPerformed(evt);
@@ -94,15 +93,6 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
         org.openide.awt.Mnemonics.setLocalizedText(componentFolderLabel, org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.componentFolderLabel.text")); // NOI18N
 
         componentFolder.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
-        org.openide.awt.Mnemonics.setLocalizedText(browseComponentButton, org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.browseComponentButton.text")); // NOI18N
-        browseComponentButton.setActionCommand(org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.browseComponentButton.actionCommand")); // NOI18N
-        browseComponentButton.setLabel(org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.browseComponentButton.text")); // NOI18N
-        browseComponentButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                browseComponentButtonActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -122,9 +112,7 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
                     .addComponent(projectLocationTextField, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(projectNameTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(browseButton)
-                    .addComponent(browseComponentButton))
+                .addComponent(browseButton)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -133,8 +121,7 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(componentFolderLabel)
-                    .addComponent(componentFolder, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(browseComponentButton))
+                    .addComponent(componentFolder, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(projectNameLabel)
@@ -148,7 +135,7 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
                     .addComponent(projectLocationLabel)
                     .addComponent(projectLocationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(browseButton))
-                .addContainerGap(166, Short.MAX_VALUE))
+                .addContainerGap(169, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -175,32 +162,8 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 		}
     }//GEN-LAST:event_browseButtonActionPerformed
 
-    private void browseComponentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseComponentButtonActionPerformed
-		String command = evt.getActionCommand();
-		if ("BROWSE".equals(command)) {
-			JFileChooser chooser = new JFileChooser();
-			FileUtil.preventFileChooserSymlinkTraversal(chooser, null);
-			chooser.setDialogTitle(NbBundle.getMessage(
-					PanelConfigureProjectVisual.class, "title.SelCompLoc"));
-			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			String path = this.componentFolder.getText();
-			if (path.length() > 0) {
-				File f = new File(path);
-				if (f.exists()) {
-					chooser.setSelectedFile(f);
-				}
-			}
-			if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog(this)) {
-				File projectDir = chooser.getSelectedFile();
-				componentFolder.setText(FileUtil.normalizeFile(projectDir).getAbsolutePath());
-			}
-			panel.fireChangeEvent();
-		}
-    }//GEN-LAST:event_browseComponentButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseButton;
-    private javax.swing.JButton browseComponentButton;
     private javax.swing.JTextField componentFolder;
     private javax.swing.JLabel componentFolderLabel;
     private javax.swing.JLabel createdFolderLabel;
@@ -239,7 +202,7 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 
 		String projectName = (String) settings.getProperty ("name"); //NOI18N
 		if (projectName == null) {
-			projectName = "isdApps-";
+			projectName = "isdApps.";
 		}
 		this.projectNameTextField.setText (projectName);
 		this.projectNameTextField.selectAll();

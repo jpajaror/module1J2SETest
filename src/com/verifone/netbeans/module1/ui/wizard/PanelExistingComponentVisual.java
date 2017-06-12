@@ -5,16 +5,28 @@
  */
 package com.verifone.netbeans.module1.ui.wizard;
 
+import com.verifone.netbeans.module1.component.ComponentDefinition;
+import java.io.File;
+import java.io.IOException;
+import javax.swing.JFileChooser;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.xml.xpath.XPathExpressionException;
 import org.openide.WizardDescriptor;
 import org.openide.WizardValidationException;
+import org.openide.filesystems.FileUtil;
+import org.openide.util.NbBundle;
+import org.xml.sax.SAXException;
 
 /**
  *
  * @author joswill
  */
-public class PanelExistingComponentVisual extends SettingsPanel {
+public class PanelExistingComponentVisual extends SettingsPanel 
+		implements DocumentListener {
 
 	private PanelExistingComponent panel;
+	public static final String PROP_COMPONENT_LOCATION = "componentLocation";	//NOI18N
 
 	/**
 	 * Creates new form PanelExistingComponent
@@ -33,13 +45,19 @@ public class PanelExistingComponentVisual extends SettingsPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        componentFolderLabel = new javax.swing.JLabel();
+        componentFolder = new javax.swing.JTextField();
+        browseComponentButton = new javax.swing.JButton();
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(PanelExistingComponentVisual.class, "PanelExistingComponentVisual.jLabel1.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(componentFolderLabel, org.openide.util.NbBundle.getMessage(PanelExistingComponentVisual.class, "PanelExistingComponentVisual.componentFolderLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(PanelExistingComponentVisual.class, "PanelExistingComponentVisual.jButton1.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(browseComponentButton, org.openide.util.NbBundle.getMessage(PanelExistingComponentVisual.class, "PanelExistingComponentVisual.browseComponentButton.text")); // NOI18N
+        browseComponentButton.setActionCommand("BROWSE"); // NOI18N
+        browseComponentButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                browseComponentButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -47,11 +65,11 @@ public class PanelExistingComponentVisual extends SettingsPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(componentFolderLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1)
+                .addComponent(componentFolder, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addComponent(browseComponentButton)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -59,37 +77,146 @@ public class PanelExistingComponentVisual extends SettingsPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
-                    .addComponent(jButton1))
-                .addContainerGap(646, Short.MAX_VALUE))
+                    .addComponent(componentFolder, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(componentFolderLabel)
+                    .addComponent(browseComponentButton))
+                .addContainerGap(268, Short.MAX_VALUE))
         );
+
+        browseComponentButton.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(PanelExistingComponentVisual.class, "PanelExistingComponentVisual.browseComponentButton.AccessibleContext.accessibleDescription")); // NOI18N
     }// </editor-fold>//GEN-END:initComponents
+
+    private void browseComponentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseComponentButtonActionPerformed
+		String command = evt.getActionCommand();
+		if ("BROWSE".equals(command)) {
+			JFileChooser chooser = new JFileChooser();
+			FileUtil.preventFileChooserSymlinkTraversal(chooser, null);
+			chooser.setDialogTitle(NbBundle.getMessage(
+					PanelExistingComponentVisual.class, "title.SelCompLoc"));
+			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			String path = this.componentFolder.getText();
+			if (path.length() > 0) {
+				File f = new File(path);
+				if (f.exists()) {
+					chooser.setSelectedFile(f);
+				}
+			}
+			if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog(this)) {
+				File projectDir = chooser.getSelectedFile();
+				componentFolder.setText(FileUtil.normalizeFile(projectDir).getAbsolutePath());
+			}
+			panel.fireChangeEvent();
+		}
+    }//GEN-LAST:event_browseComponentButtonActionPerformed
 
 	@Override
 	void store(WizardDescriptor settings) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		String compFolder = componentFolder.getText().trim();
+
+		try {
+			ComponentDefinition compDef = new ComponentDefinition(compFolder);
+			if (!compDef.validateComponentDef()) {
+				settings.putProperty("name", null);
+				settings.putProperty("compdir", null);
+				return;
+			}
+			settings.putProperty("compdir", compDef);
+			String compDefName=compDef.getComponentName();
+			settings.putProperty("name", compDefName);
+
+		} catch (IOException|SAXException|XPathExpressionException ex) {
+			settings.putProperty("name", null);
+			settings.putProperty("compdir", null);
+		}
 	}
 
 	@Override
 	void read(WizardDescriptor settings) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		ComponentDefinition compLocation = (ComponentDefinition) settings.getProperty("compdir");
+
+		String strCompLoc;
+		if (compLocation != null) {
+			strCompLoc = compLocation.getDirectoryString();
+		} else {
+			strCompLoc = "C:\\gitrepos\\petroApps\\isdApps\\vsmsV2\\sys\\util";
+//			strCompLoc = "/Users/joswill/git/compTest";
+		}
+
+		this.componentFolder.setText(strCompLoc);
 	}
 
 	@Override
-	boolean valid(WizardDescriptor settings) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	boolean valid(WizardDescriptor descriptor) {
+		try {
+			ComponentDefinition compDef = new ComponentDefinition(componentFolder.getText());
+			if (!compDef.validateComponentDef()) {
+				String message = NbBundle.getMessage(PanelExistingComponentVisual.class,
+						"msg.InvalidCompDefXML");
+				descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, message);
+				return false;
+			}
+		} catch (IOException ex) {
+			String message = NbBundle.getMessage(PanelExistingComponentVisual.class,
+					"msg.InvalidCompFolder");
+			descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, message);
+			return false;
+		}
+
+		descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, "");
+		return true;
 	}
 
 	@Override
 	void validate(WizardDescriptor settings) throws WizardValidationException {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//		String compStrFolder=componentFolder.getText();
+//		try {
+//			ComponentDefinition compDef = new ComponentDefinition(compStrFolder);
+//			if (compDef.validateComponentDef()){
+//				String compDefName=compDef.getComponentName();
+//				projectNameTextField.setText(compDefName);
+//			}
+//		} catch (IOException ex) {
+//			throw new WizardValidationException(this, ex.getMessage(),
+//					NbBundle.getMessage(PanelExistingComponentVisual.class,
+//					"msg.InvalidCompFolder"));
+//		} catch (SAXException|XPathExpressionException ex) {
+//			throw new WizardValidationException(this, ex.getMessage(),
+//					NbBundle.getMessage(PanelExistingComponentVisual.class,
+//					"msg.InvalidCompDefXML"));
+//		}
 	}
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JButton browseComponentButton;
+    private javax.swing.JTextField componentFolder;
+    private javax.swing.JLabel componentFolderLabel;
     // End of variables declaration//GEN-END:variables
+
+	@Override
+	public void insertUpdate(DocumentEvent e) {
+		if (this.componentFolder.getDocument() == e.getDocument()) {
+			firePropertyChange(PROP_COMPONENT_LOCATION, null,
+					this.componentFolder.getText());
+		}
+		panel.fireChangeEvent(); // Notify that the panel changed
+	}
+
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+		if (this.componentFolder.getDocument() == e.getDocument()) {
+			firePropertyChange(PROP_COMPONENT_LOCATION, null,
+					this.componentFolder.getText());
+		}
+		panel.fireChangeEvent(); // Notify that the panel changed
+	}
+
+	@Override
+	public void changedUpdate(DocumentEvent e) {
+		if (this.componentFolder.getDocument() == e.getDocument()) {
+			firePropertyChange(PROP_COMPONENT_LOCATION, null,
+					this.componentFolder.getText());
+		}
+		panel.fireChangeEvent(); // Notify that the panel changed
+	}
 }
