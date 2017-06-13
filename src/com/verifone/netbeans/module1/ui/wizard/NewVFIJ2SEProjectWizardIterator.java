@@ -95,7 +95,7 @@ public final class NewVFIJ2SEProjectWizardIterator
 
 	private List<WizardDescriptor.Panel<WizardDescriptor>> createPanels() {
 		panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
-		panels.add(new PanelExistingComponent());
+//		panels.add(new PanelExistingComponent());
 		panels.add(new PanelConfigureProject());
 		panels.add(new NewVFIJ2SEProjectWizardPanel2());
 //TODO: Clean
@@ -123,7 +123,7 @@ public final class NewVFIJ2SEProjectWizardIterator
 
 	private String[] createSteps() {
 		return new String[] {
-			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LBL.ConfigureExistingComponent"),
+//			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LBL.ConfigureExistingComponent"),
 			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LBL.ConfigureProject"),
 			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LBL.ConfigureSourceRoots"),
 		};

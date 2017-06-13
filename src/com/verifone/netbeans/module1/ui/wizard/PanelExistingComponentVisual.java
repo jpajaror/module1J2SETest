@@ -34,6 +34,7 @@ public class PanelExistingComponentVisual extends SettingsPanel
 	public PanelExistingComponentVisual(PanelExistingComponent panel) {
 		this.panel = panel;
 		initComponents();
+		componentFolder.getDocument().addDocumentListener(this);
 	}
 
 	/**
@@ -67,7 +68,7 @@ public class PanelExistingComponentVisual extends SettingsPanel
                 .addContainerGap()
                 .addComponent(componentFolderLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(componentFolder, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
+                .addComponent(componentFolder, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(browseComponentButton)
                 .addContainerGap())
@@ -138,8 +139,8 @@ public class PanelExistingComponentVisual extends SettingsPanel
 		if (compLocation != null) {
 			strCompLoc = compLocation.getDirectoryString();
 		} else {
-			strCompLoc = "C:\\gitrepos\\petroApps\\isdApps\\vsmsV2\\sys\\util";
-//			strCompLoc = "/Users/joswill/git/compTest";
+//			strCompLoc = "C:\\gitrepos\\petroApps\\isdApps\\vsmsV2\\sys\\util";
+			strCompLoc = "/Users/joswill/git/compTest";
 		}
 
 		this.componentFolder.setText(strCompLoc);
