@@ -96,6 +96,8 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 
         org.openide.awt.Mnemonics.setLocalizedText(createdFolderLabel, org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.createdFolderLabel.text")); // NOI18N
 
+        createdFolderTextField.setEditable(false);
+
         org.openide.awt.Mnemonics.setLocalizedText(componentFolderLabel, org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.componentFolderLabel.text")); // NOI18N
 
         componentFolder.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -223,7 +225,13 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 
 		settings.putProperty("projdir", new File(folder));		//NOI18N
 		settings.putProperty("name", name);						//NOI18N
-		settings.putProperty("compdir", panelCompDef);			//NOI18N
+		try {
+			ComponentDefinition compDef = new ComponentDefinition(compFolder);
+			if (compDef.validateComponentDef()) {
+				panelCompDef = compDef;
+				settings.putProperty("compdir", panelCompDef);			//NOI18N
+			}
+		} catch (IOException ex) { }
 	}
 
 	@Override
@@ -249,8 +257,8 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 		if (panelCompDef != null) {
 			strCompLoc = panelCompDef.getDirectoryString();
 		} else {
-//			strCompLoc = "C:\\gitrepos\\petroApps\\isdApps\\vsmsV2\\sys\\util";
-			strCompLoc = "/Users/joswill/git/compTest";
+			strCompLoc = "C:\\gitrepos\\petroApps\\isdApps\\vsmsV2\\sys\\util";
+//			strCompLoc = "/Users/joswill/git/compTest";
 		}
 		this.componentFolder.setText(strCompLoc);
 	}
@@ -321,22 +329,22 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 
 	@Override
 	void validate(WizardDescriptor settings) throws WizardValidationException {
-//		String compStrFolder=componentFolder.getText();
-//		try {
-//			ComponentDefinition compDef = new ComponentDefinition(compStrFolder);
-//			if (compDef.validateComponentDef()){
-//				String compDefName=compDef.getComponentName();
-//				projectNameTextField.setText(compDefName);
-//			}
-//		} catch (IOException ex) {
-//			throw new WizardValidationException(this, ex.getMessage(),
-//					NbBundle.getMessage(PanelConfigureProjectVisual.class,
-//					"msg.InvalidCompFolder"));
-//		} catch (SAXException|XPathExpressionException ex) {
-//			throw new WizardValidationException(this, ex.getMessage(),
-//					NbBundle.getMessage(PanelConfigureProjectVisual.class,
-//					"msg.InvalidCompDefXML"));
-//		}
+		String compStrFolder=componentFolder.getText();
+		try {
+			ComponentDefinition compDef = new ComponentDefinition(compStrFolder);
+			if (compDef.validateComponentDef()){
+				String compDefName=compDef.getComponentName();
+				projectNameTextField.setText(compDefName);
+			}
+		} catch (IOException ex) {
+			throw new WizardValidationException(this, ex.getMessage(),
+					NbBundle.getMessage(PanelConfigureProjectVisual.class,
+					"msg.InvalidCompFolder"));
+		} catch (SAXException|XPathExpressionException ex) {
+			throw new WizardValidationException(this, ex.getMessage(),
+					NbBundle.getMessage(PanelConfigureProjectVisual.class,
+					"msg.InvalidCompDefXML"));
+		}
 	}
 
 	@Override
@@ -383,18 +391,19 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 
 	private void updateTexts (DocumentEvent e) {
 		Document doc = e.getDocument();
-		if (doc == componentFolder.getDocument() ||
-			doc == projectNameTextField.getDocument() ||
-			doc == projectLocationTextField.getDocument()) {
+		if (doc == componentFolder.getDocument()){
 			try{
-				if ((panelCompDef!=null)&&(panelCompDef.validateComponentDef())){
+				if ((panelCompDef!=null) && (panelCompDef.validateComponentDef())){
 					String compDefName=panelCompDef.getComponentName();
 					projectNameTextField.setText(compDefName);
 				}
 			} catch (IOException|SAXException|XPathExpressionException ex) { }
+		}
+		if (doc == projectNameTextField.getDocument() ||
+			doc == projectLocationTextField.getDocument()) {
 			String projectName = projectNameTextField.getText();
 			String projectFolder = projectLocationTextField.getText();
-			projectLocationTextField.setText(projectFolder + File.separatorChar + projectName);
+			createdFolderTextField.setText(projectFolder + File.separatorChar + projectName);
 		}
 		panel.fireChangeEvent(); // Notify that the panel changed
 	}
