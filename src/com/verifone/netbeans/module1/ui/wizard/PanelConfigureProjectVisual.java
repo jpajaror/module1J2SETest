@@ -405,7 +405,11 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 			String projectFolder = projectLocationTextField.getText();
 			createdFolderTextField.setText(projectFolder + File.separatorChar + projectName);
 		}
-		panel.fireChangeEvent(); // Notify that the panel changed
+		dataChanged();
+	}
+
+	private void dataChanged(){
+		panel.fireChangeEvent();// Notify that the panel changed
 	}
 
 	static File getCanonicalFile(File file) {

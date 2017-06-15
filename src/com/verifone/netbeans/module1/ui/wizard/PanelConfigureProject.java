@@ -14,12 +14,10 @@
  */
 package com.verifone.netbeans.module1.ui.wizard;
 
-import java.util.HashSet;
-import java.util.Set;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.WizardValidationException;
+import org.openide.util.ChangeSupport;
 import org.openide.util.HelpCtx;
 
 public class PanelConfigureProject implements WizardDescriptor.Panel<WizardDescriptor>,
@@ -31,7 +29,8 @@ public class PanelConfigureProject implements WizardDescriptor.Panel<WizardDescr
 	 */
 	private WizardDescriptor descriptor;
 	private PanelConfigureProjectVisual component;
-	private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
+	private final ChangeSupport changeSupport = new ChangeSupport(this);
+//	private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
 
 	// Get the visual component for the panel. In this template, the component
 	// is kept separate. This can be more efficient: if the wizard is created
@@ -66,16 +65,12 @@ public class PanelConfigureProject implements WizardDescriptor.Panel<WizardDescr
 
 	@Override
 	public void addChangeListener(ChangeListener l) {
-		synchronized (listeners) {
-			listeners.add(l);
-		}
+		changeSupport.addChangeListener(l);
 	}
 
 	@Override
 	public void removeChangeListener(ChangeListener l) {
-		synchronized (listeners) {
-			listeners.remove(l);
-		}
+		changeSupport.removeChangeListener(l);
 	}
 
 	@Override
@@ -91,14 +86,7 @@ public class PanelConfigureProject implements WizardDescriptor.Panel<WizardDescr
 	}
 
 	protected final void fireChangeEvent() {
-		Set<ChangeListener> ls;
-		synchronized (listeners) {
-			ls = new HashSet<ChangeListener>(listeners);
-		}
-		ChangeEvent ev = new ChangeEvent(this);
-		for (ChangeListener l : ls) {
-			l.stateChanged(ev);
-		}
+		changeSupport.fireChange();
 	}
 
 	@Override
