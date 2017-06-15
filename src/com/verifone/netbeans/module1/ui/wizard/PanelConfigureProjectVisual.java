@@ -20,7 +20,6 @@ import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
 import javax.xml.xpath.XPathExpressionException;
 import org.netbeans.spi.project.ui.support.ProjectChooser;
 import org.openide.WizardDescriptor;
@@ -236,31 +235,32 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 
 	@Override
 	void read(WizardDescriptor settings) {
-		File projectLocation = (File) settings.getProperty("projdir");
-		if (projectLocation == null || projectLocation.getParentFile() == null 
-				|| !projectLocation.getParentFile().isDirectory()) {
-			projectLocation = ProjectChooser.getProjectsFolder();
-		} else {
-			projectLocation = projectLocation.getParentFile();
-		}
-		this.projectLocationTextField.setText(projectLocation.getAbsolutePath());
-
-		String projectName = (String) settings.getProperty ("name"); //NOI18N
-		if (projectName == null) {
-			projectName = "isdApps.";
-		}
-		this.projectNameTextField.setText (projectName);
-		this.projectNameTextField.selectAll();
-
-		panelCompDef = (ComponentDefinition) settings.getProperty("compdir");
+		panelCompDef = (ComponentDefinition) settings.getProperty("compdir"); //NOI18N
 		String strCompLoc;
 		if (panelCompDef != null) {
 			strCompLoc = panelCompDef.getDirectoryString();
 		} else {
 			strCompLoc = "C:\\gitrepos\\petroApps\\isdApps\\vsmsV2\\sys\\util";
 //			strCompLoc = "/Users/joswill/git/compTest";
+			try {
+				panelCompDef = new ComponentDefinition(strCompLoc);
+			} catch (IOException ex) { }
 		}
 		this.componentFolder.setText(strCompLoc);
+
+		String projectName = (String) settings.getProperty ("name"); //NOI18N
+		if (projectName != null) {
+			this.projectNameTextField.setText (projectName);
+		}
+
+		File projectLocation = (File) settings.getProperty("projdir");
+		if (projectLocation == null || projectLocation.getParentFile() == null 
+				|| !projectLocation.getParentFile().isDirectory()) {
+			projectLocation = ProjectChooser.getProjectsFolder();
+		}
+		this.projectLocationTextField.setText(projectLocation.getAbsolutePath());
+
+		this.projectNameTextField.selectAll();
 	}
 
 	@Override
@@ -349,63 +349,84 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 
 	@Override
 	public void insertUpdate(DocumentEvent e) {
-		updateTexts(e);
 		if (this.componentFolder.getDocument() == e.getDocument()) {
+			calculateProjectName();
+//			calculateProjectLocation();
+//			dataChanged();
 			firePropertyChange(PROP_COMPONENT_LOCATION, null, this.componentFolder.getText());
 		}
 		if (this.projectNameTextField.getDocument() == e.getDocument()) {
+			calculateProjectLocation();
+			dataChanged();
 			firePropertyChange(PROP_PROJECT_NAME, null, this.projectNameTextField.getText());
 		}
 		if (this.projectLocationTextField.getDocument() == e.getDocument()) {
+			calculateProjectLocation();
+			dataChanged();
 			firePropertyChange (PROP_PROJECT_LOCATION,null,this.projectLocationTextField.getText());
 		}
 	}
 
 	@Override
 	public void removeUpdate(DocumentEvent e) {
-		updateTexts(e);
 		if (this.componentFolder.getDocument() == e.getDocument()) {
+			calculateProjectName();
+//			calculateProjectLocation();
+//			dataChanged();
 			firePropertyChange(PROP_COMPONENT_LOCATION, null, this.componentFolder.getText());
 		}
 		if (this.projectNameTextField.getDocument() == e.getDocument()) {
+			calculateProjectLocation();
+			dataChanged();
 			firePropertyChange(PROP_PROJECT_NAME, null, this.projectNameTextField.getText());
 		}
 		if (this.projectLocationTextField.getDocument() == e.getDocument()) {
+			calculateProjectLocation();
+			dataChanged();
 			firePropertyChange (PROP_PROJECT_LOCATION,null,this.projectLocationTextField.getText());
 		}
 	}
 
 	@Override
 	public void changedUpdate(DocumentEvent e) {
-		updateTexts(e);
 		if (this.componentFolder.getDocument() == e.getDocument()) {
+			calculateProjectName();
+//			calculateProjectLocation();
+//			dataChanged();
 			firePropertyChange(PROP_COMPONENT_LOCATION, null, this.componentFolder.getText());
 		}
 		if (this.projectNameTextField.getDocument() == e.getDocument()) {
+			calculateProjectLocation();
+			dataChanged();
 			firePropertyChange(PROP_PROJECT_NAME, null, this.projectNameTextField.getText());
 		}
 		if (this.projectLocationTextField.getDocument() == e.getDocument()) {
+			calculateProjectLocation();
+			dataChanged();
 			firePropertyChange (PROP_PROJECT_LOCATION,null,this.projectLocationTextField.getText());
 		}
 	}
 
-	private void updateTexts (DocumentEvent e) {
-		Document doc = e.getDocument();
-		if (doc == componentFolder.getDocument()){
-			try{
-				if ((panelCompDef!=null) && (panelCompDef.validateComponentDef())){
-					String compDefName=panelCompDef.getComponentName();
-					projectNameTextField.setText(compDefName);
-				}
-			} catch (IOException|SAXException|XPathExpressionException ex) { }
+	private void calculateProjectName(){
+		try{
+			if ((panelCompDef!=null) && (panelCompDef.validateComponentDef())){
+				String compDefName=panelCompDef.getComponentName();
+				projectNameTextField.setText(compDefName);
+			}
+		} catch (IOException|SAXException|XPathExpressionException ex) { }
+	}
+
+	private synchronized void calculateProjectLocation() {
+		String projectFolder = projectLocationTextField.getText();
+		String projFolderPath = FileUtil.normalizeFile(
+				new File(projectFolder)).getAbsolutePath();
+		String projName = projectNameTextField.getText();
+		if (projFolderPath.endsWith(File.separator)) {
+			this.createdFolderTextField.setText(projFolderPath + projName);
+		} else {
+			this.createdFolderTextField.setText(projFolderPath + File.separator +
+					projName);
 		}
-		if (doc == projectNameTextField.getDocument() ||
-			doc == projectLocationTextField.getDocument()) {
-			String projectName = projectNameTextField.getText();
-			String projectFolder = projectLocationTextField.getText();
-			createdFolderTextField.setText(projectFolder + File.separatorChar + projectName);
-		}
-		dataChanged();
 	}
 
 	private void dataChanged(){
