@@ -49,8 +49,6 @@ public final class PanelSourceFoldersVisual extends SettingsPanel implements
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-//        sourcePanel = new javax.swing.JPanel();
-//        testsPanel = new javax.swing.JPanel();
 		sourcePanel = new FolderList("Sources", 'S', "SourcesADesc", "SourcesFCMess",
 			'A', "Add Source...", 'R', "Remove source");
 		testsPanel = new FolderList("Tests", 'T', "TestsADesc", "TestsFCMess",
@@ -61,28 +59,6 @@ public final class PanelSourceFoldersVisual extends SettingsPanel implements
         jLabel2 = new javax.swing.JLabel();
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(PanelSourceFoldersVisual.class, "PanelSourceFoldersVisual.jLabel1.text")); // NOI18N
-
-        javax.swing.GroupLayout sourcePanelLayout = new javax.swing.GroupLayout(sourcePanel);
-        sourcePanel.setLayout(sourcePanelLayout);
-        sourcePanelLayout.setHorizontalGroup(
-            sourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        sourcePanelLayout.setVerticalGroup(
-            sourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 110, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout testsPanelLayout = new javax.swing.GroupLayout(testsPanel);
-        testsPanel.setLayout(testsPanelLayout);
-        testsPanelLayout.setHorizontalGroup(
-            testsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        testsPanelLayout.setVerticalGroup(
-            testsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 109, Short.MAX_VALUE)
-        );
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(PanelSourceFoldersVisual.class, "PanelSourceFoldersVisual.jLabel2.text")); // NOI18N
 
