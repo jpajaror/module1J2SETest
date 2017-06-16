@@ -57,7 +57,7 @@ public class ComponentDefinition {
 	}
 
 	public boolean validateComponentDef(){
-		String compDefFileStr = compDirStr + "/componentDef.xml";
+		String compDefFileStr = compDirStr + File.separator + "componentDef.xml";
 		compDefF = new File(compDefFileStr).getAbsoluteFile();
 		compDefF = FileUtil.normalizeFile(compDefF);
 		if (compDefF.length() == 0 || compDefF.isDirectory()) {
@@ -102,7 +102,7 @@ public class ComponentDefinition {
 	}
 
 	public boolean hasSrcDir() {
-		String compDirSrc = compDirStr + "/src";
+		String compDirSrc = compDirStr + File.separator + "src";
 		File srcDir = new File(compDirSrc);
 		if (!srcDir.exists() || !srcDir.isDirectory()){
 			return false;
@@ -112,9 +112,19 @@ public class ComponentDefinition {
 	}
 
 	public boolean hasUnitDir() {
-		String compDirUnit = compDirStr + "/unit";
+		String compDirUnit = compDirStr + File.separator + "unit";
 		File unitDir = new File(compDirUnit);
 		if (!unitDir.exists() || !unitDir.isDirectory()){
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	public boolean hasMockDir() {
+		String compDirMock = compDirStr + File.separator + "mock";
+		File mockDir = new File(compDirMock);
+		if (!mockDir.exists() || !mockDir.isDirectory()){
 			return false;
 		} else {
 			return true;

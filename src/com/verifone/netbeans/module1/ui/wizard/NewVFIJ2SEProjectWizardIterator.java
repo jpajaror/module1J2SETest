@@ -97,12 +97,12 @@ public final class NewVFIJ2SEProjectWizardIterator
 		panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
 //		panels.add(new PanelExistingComponent());
 		panels.add(new PanelConfigureProject());
-		panels.add(new NewVFIJ2SEProjectWizardPanel2());
+		panels.add(new PanelSourceFolders());
 //TODO: Clean
 //		if (panels == null) {
 //			panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
 //			panels.add(new NewVFIJ2SEProjectWizardPanel1());
-//			panels.add(new NewVFIJ2SEProjectWizardPanel2());
+//			panels.add(new PanelSourceFolders());
 //			String[] steps = new String[panels.size()];
 //			for (int i = 0; i < panels.size(); i++) {
 //				Component c = panels.get(i).getComponent();

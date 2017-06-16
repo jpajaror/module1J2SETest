@@ -235,8 +235,8 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 			strCompLoc = panelCompDef.getDirectoryString();
 		} else {
 			//Testing only remove this and set the focus here
-//			strCompLoc = "C:\\gitrepos\\petroApps\\isdApps\\vsmsV2\\sys\\util";
-			strCompLoc = "/Users/joswill/git/compTest";
+			strCompLoc = "C:\\gitrepos\\petroApps\\isdApps\\vsmsV2\\sys\\util";
+//			strCompLoc = "/Users/joswill/git/compTest";
 			try {
 				panelCompDef = new ComponentDefinition(strCompLoc);
 			} catch (IOException ex) { }
@@ -353,7 +353,9 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 	@Override
 	public void insertUpdate(DocumentEvent e) {
 		if (this.componentFolder.getDocument() == e.getDocument()) {
-			calculateProjectName();
+			if (!changeProjectName()) {
+				dataChanged();
+			}
 			firePropertyChange(PROP_COMPONENT_LOCATION, null, this.componentFolder.getText());
 		}
 		if (this.projectNameTextField.getDocument() == e.getDocument()) {
@@ -371,7 +373,9 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 	@Override
 	public void removeUpdate(DocumentEvent e) {
 		if (this.componentFolder.getDocument() == e.getDocument()) {
-			calculateProjectName();
+			if (!changeProjectName()) {
+				dataChanged();
+			}
 			firePropertyChange(PROP_COMPONENT_LOCATION, null, this.componentFolder.getText());
 		}
 		if (this.projectNameTextField.getDocument() == e.getDocument()) {
@@ -389,7 +393,9 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 	@Override
 	public void changedUpdate(DocumentEvent e) {
 		if (this.componentFolder.getDocument() == e.getDocument()) {
-			calculateProjectName();
+			if (!changeProjectName()) {
+				dataChanged();
+			}
 			firePropertyChange(PROP_COMPONENT_LOCATION, null, this.componentFolder.getText());
 		}
 		if (this.projectNameTextField.getDocument() == e.getDocument()) {
@@ -404,7 +410,7 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 		}
 	}
 
-	private void calculateProjectName(){
+	private boolean changeProjectName(){
 		if (calculateProjectName) {
 			try{
 				panelCompDef = new ComponentDefinition(componentFolder.getText());
@@ -412,16 +418,13 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 				if (panelCompDef.validateComponentDef()) {
 					String compDefName=panelCompDef.getComponentName();
 					projectNameTextField.setText(compDefName);
-				} else {
-					dataChanged();
+					return true;
 				}
 			} catch (IOException|SAXException|XPathExpressionException ex) {
 				panelCompDef = null;
-				dataChanged();
 			}
-		} else {
-			dataChanged();
 		}
+		return false;
 	}
 
 	private void calculateProjectLocation() {
