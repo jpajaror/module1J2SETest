@@ -25,7 +25,6 @@ import org.netbeans.spi.project.ui.support.ProjectChooser;
 import org.openide.WizardDescriptor;
 import org.openide.WizardValidationException;
 import org.openide.filesystems.FileUtil;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.Utilities;
 import org.xml.sax.SAXException;
@@ -39,6 +38,7 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 
 	private PanelConfigureProject panel;
 	private ComponentDefinition panelCompDef;
+	private boolean calculateProjectName;
 
 	/**
 	 * Creates new form NewVFIJ2SEProjectVisualPanel1
@@ -218,19 +218,13 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 
 	@Override
 	void store(WizardDescriptor settings) {
+		//Executes after validate
 		String name = projectNameTextField.getText().trim();
 		String folder = projectLocationTextField.getText().trim();
-		String compFolder = componentFolder.getText().trim();
 
 		settings.putProperty("projdir", new File(folder));		//NOI18N
 		settings.putProperty("name", name);						//NOI18N
-		try {
-			ComponentDefinition compDef = new ComponentDefinition(compFolder);
-			if (compDef.validateComponentDef()) {
-				panelCompDef = compDef;
-				settings.putProperty("compdir", panelCompDef);			//NOI18N
-			}
-		} catch (IOException ex) { }
+		settings.putProperty("compdir", panelCompDef);			//NOI18N
 	}
 
 	@Override
@@ -240,17 +234,22 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 		if (panelCompDef != null) {
 			strCompLoc = panelCompDef.getDirectoryString();
 		} else {
-			strCompLoc = "C:\\gitrepos\\petroApps\\isdApps\\vsmsV2\\sys\\util";
-//			strCompLoc = "/Users/joswill/git/compTest";
+			//Testing only remove this and set the focus here
+//			strCompLoc = "C:\\gitrepos\\petroApps\\isdApps\\vsmsV2\\sys\\util";
+			strCompLoc = "/Users/joswill/git/compTest";
 			try {
 				panelCompDef = new ComponentDefinition(strCompLoc);
 			} catch (IOException ex) { }
 		}
+		setCalculateName(false);
 		this.componentFolder.setText(strCompLoc);
+		setCalculateName(true);
 
 		String projectName = (String) settings.getProperty ("name"); //NOI18N
 		if (projectName != null) {
 			this.projectNameTextField.setText (projectName);
+		} else {
+			//Write default name... meanwhile
 		}
 
 		File projectLocation = (File) settings.getProperty("projdir");
@@ -308,18 +307,21 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 		}
 
 		try {
-			ComponentDefinition compDef = new ComponentDefinition(componentFolder.getText());
-			if (!compDef.validateComponentDef()) {
+			if (panelCompDef == null) {
+				panelCompDef = new ComponentDefinition(componentFolder.getText());
+			}
+			if (!panelCompDef.validateComponentDef()) {
 				String message = NbBundle.getMessage(PanelConfigureProjectVisual.class,
 						"msg.InvalidCompDefXML");
 				descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, message);
+				panelCompDef = null;
 				return false;
 			}
-			panelCompDef = compDef;
 		} catch (IOException ex) {
 			String message = NbBundle.getMessage(PanelConfigureProjectVisual.class,
 					"msg.InvalidCompFolder");
 			descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, message);
+			panelCompDef = null;
 			return false;
 		}
 
@@ -329,30 +331,29 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 
 	@Override
 	void validate(WizardDescriptor settings) throws WizardValidationException {
-		String compStrFolder=componentFolder.getText();
-		try {
-			ComponentDefinition compDef = new ComponentDefinition(compStrFolder);
-			if (compDef.validateComponentDef()){
-				String compDefName=compDef.getComponentName();
-				projectNameTextField.setText(compDefName);
-			}
-		} catch (IOException ex) {
-			throw new WizardValidationException(this, ex.getMessage(),
-					NbBundle.getMessage(PanelConfigureProjectVisual.class,
-					"msg.InvalidCompFolder"));
-		} catch (SAXException|XPathExpressionException ex) {
-			throw new WizardValidationException(this, ex.getMessage(),
-					NbBundle.getMessage(PanelConfigureProjectVisual.class,
-					"msg.InvalidCompDefXML"));
-		}
+		//Executes after Next is pressed
+//		String compStrFolder=componentFolder.getText();
+//		try {
+//			ComponentDefinition compDef = new ComponentDefinition(compStrFolder);
+//			if (compDef.validateComponentDef()){
+//				String compDefName=compDef.getComponentName();
+//				projectNameTextField.setText(compDefName);
+//			}
+//		} catch (IOException ex) {
+//			throw new WizardValidationException(this, ex.getMessage(),
+//					NbBundle.getMessage(PanelConfigureProjectVisual.class,
+//					"msg.InvalidCompFolder"));
+//		} catch (SAXException|XPathExpressionException ex) {
+//			throw new WizardValidationException(this, ex.getMessage(),
+//					NbBundle.getMessage(PanelConfigureProjectVisual.class,
+//					"msg.InvalidCompDefXML"));
+//		}
 	}
 
 	@Override
 	public void insertUpdate(DocumentEvent e) {
 		if (this.componentFolder.getDocument() == e.getDocument()) {
 			calculateProjectName();
-//			calculateProjectLocation();
-//			dataChanged();
 			firePropertyChange(PROP_COMPONENT_LOCATION, null, this.componentFolder.getText());
 		}
 		if (this.projectNameTextField.getDocument() == e.getDocument()) {
@@ -371,8 +372,6 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 	public void removeUpdate(DocumentEvent e) {
 		if (this.componentFolder.getDocument() == e.getDocument()) {
 			calculateProjectName();
-//			calculateProjectLocation();
-//			dataChanged();
 			firePropertyChange(PROP_COMPONENT_LOCATION, null, this.componentFolder.getText());
 		}
 		if (this.projectNameTextField.getDocument() == e.getDocument()) {
@@ -391,8 +390,6 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 	public void changedUpdate(DocumentEvent e) {
 		if (this.componentFolder.getDocument() == e.getDocument()) {
 			calculateProjectName();
-//			calculateProjectLocation();
-//			dataChanged();
 			firePropertyChange(PROP_COMPONENT_LOCATION, null, this.componentFolder.getText());
 		}
 		if (this.projectNameTextField.getDocument() == e.getDocument()) {
@@ -408,15 +405,26 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 	}
 
 	private void calculateProjectName(){
-		try{
-			if ((panelCompDef!=null) && (panelCompDef.validateComponentDef())){
-				String compDefName=panelCompDef.getComponentName();
-				projectNameTextField.setText(compDefName);
+		if (calculateProjectName) {
+			try{
+				panelCompDef = new ComponentDefinition(componentFolder.getText());
+
+				if (panelCompDef.validateComponentDef()) {
+					String compDefName=panelCompDef.getComponentName();
+					projectNameTextField.setText(compDefName);
+				} else {
+					dataChanged();
+				}
+			} catch (IOException|SAXException|XPathExpressionException ex) {
+				panelCompDef = null;
+				dataChanged();
 			}
-		} catch (IOException|SAXException|XPathExpressionException ex) { }
+		} else {
+			dataChanged();
+		}
 	}
 
-	private synchronized void calculateProjectLocation() {
+	private void calculateProjectLocation() {
 		String projectFolder = projectLocationTextField.getText();
 		String projFolderPath = FileUtil.normalizeFile(
 				new File(projectFolder)).getAbsolutePath();
@@ -439,6 +447,10 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 		} catch (IOException e) {
 			return null;
 		}
+	}
+
+	private void setCalculateName(boolean calculateName) {
+		this.calculateProjectName = calculateName;
 	}
 
 	static boolean isIllegalName(final String name) {
