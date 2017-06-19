@@ -14,6 +14,7 @@
  */
 package com.verifone.netbeans.module1.ui.wizard;
 
+import com.verifone.netbeans.module1.component.ComponentDefinition;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
@@ -89,8 +90,8 @@ public final class NewVFIJ2SEProjectWizardIterator
 			}
 		}
 		//set the default values of the sourceRoot and the testRoot properties
-		this.wiz.putProperty("sourceRoot", new File[0]);	//NOI18N
-		this.wiz.putProperty("testRoot", new File[0]);		//NOI18N
+		this.wiz.putProperty(ComponentDefinition.SRCROT, new File[0]);
+		this.wiz.putProperty(ComponentDefinition.TSTROT, new File[0]);
 	}
 
 	private List<WizardDescriptor.Panel<WizardDescriptor>> createPanels() {

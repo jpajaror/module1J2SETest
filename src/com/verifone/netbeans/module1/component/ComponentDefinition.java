@@ -36,9 +36,16 @@ import org.xml.sax.SAXException;
  * @author JoswillP1
  */
 public class ComponentDefinition {
+	public static String PRJDIR="projdir";			//NOI18N
+	public static String CMPDIR="compdir";			//NOI18N
+	public static String NAME="name";				//NOI18N
+	public static String SRCROT="sourceRoot";		//NOI18N
+	public static String TSTROT="testRoot";			//NOI18N
+
 	private String compDirStr;
 	private File compDirF;
 	private File compDefF;
+	private File srcDir, unitDir;
 
 	public ComponentDefinition(String dir) throws IOException {
 		compDirF=new File(dir);
@@ -57,7 +64,7 @@ public class ComponentDefinition {
 	}
 
 	public boolean validateComponentDef(){
-		String compDefFileStr = compDirStr + File.separator + "componentDef.xml";
+		String compDefFileStr = compDirStr + File.separator + "componentDef.xml";//NOI18N
 		compDefF = new File(compDefFileStr).getAbsoluteFile();
 		compDefF = FileUtil.normalizeFile(compDefF);
 		if (compDefF.length() == 0 || compDefF.isDirectory()) {
@@ -73,7 +80,7 @@ public class ComponentDefinition {
 		Document doc = XMLUtil.parse(new InputSource(
 				new FileInputStream(compDefF)), false, false, null, null);
 		XPath xPath = XPathFactory.newInstance().newXPath();
-		NodeList nodes = (NodeList) xPath.evaluate("/componentDef/componentDef",
+		NodeList nodes = (NodeList) xPath.evaluate("/componentDef/componentDef",//NOI18N
 				doc, XPathConstants.NODESET);
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Element elem = (Element) nodes.item(i);
@@ -90,7 +97,7 @@ public class ComponentDefinition {
 		Document doc = XMLUtil.parse(new InputSource(
 				new FileInputStream(compDefF)), false, false, null, null);
 		XPath xPath = XPathFactory.newInstance().newXPath();
-		name = (String) xPath.evaluate("/componentDef/@name", doc,
+		name = (String) xPath.evaluate("/componentDef/@name", doc,//NOI18N
 				XPathConstants.STRING);
 		if ((null == name) || (name.isEmpty())){
 			return null;
@@ -103,11 +110,19 @@ public class ComponentDefinition {
 
 	public boolean hasSrcDir() {
 		String compDirSrc = compDirStr + File.separator + "src";
-		File srcDir = new File(compDirSrc);
+		srcDir = new File(compDirSrc);
+		return !(!srcDir.exists() || !srcDir.isDirectory());
+	}
+
+	public File getSrcDir() {
+		if (srcDir == null){
+			String compDirSrc = compDirStr + File.separator + "src";
+			srcDir = new File(compDirSrc);
+		}
 		if (!srcDir.exists() || !srcDir.isDirectory()){
-			return false;
+			return null;
 		} else {
-			return true;
+			return srcDir;
 		}
 	}
 
@@ -118,6 +133,18 @@ public class ComponentDefinition {
 			return false;
 		} else {
 			return true;
+		}
+	}
+
+	public File getUnitDir() {
+		if (unitDir == null){
+			String compDirUnit = compDirStr + File.separator + "unit";
+			unitDir = new File(compDirUnit);
+		}
+		if (!unitDir.exists() || !unitDir.isDirectory()){
+			return null;
+		} else {
+			return unitDir;
 		}
 	}
 

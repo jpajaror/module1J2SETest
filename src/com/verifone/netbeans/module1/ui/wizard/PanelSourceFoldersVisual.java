@@ -14,11 +14,17 @@
  */
 package com.verifone.netbeans.module1.ui.wizard;
 
+import com.verifone.netbeans.module1.component.ComponentDefinition;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import org.openide.WizardDescriptor;
 import org.openide.WizardValidationException;
 import org.netbeans.modules.java.api.common.project.ui.wizards.FolderList;
+import org.netbeans.spi.project.ui.templates.support.Templates;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
+import org.openide.util.NbBundle;
 
 public final class PanelSourceFoldersVisual extends SettingsPanel implements
 		PropertyChangeListener {
@@ -33,6 +39,13 @@ public final class PanelSourceFoldersVisual extends SettingsPanel implements
 		initComponents();
 		this.sourcePanel.addPropertyChangeListener (this);
 		this.testsPanel.addPropertyChangeListener(this);
+		this.setName(NbBundle.getMessage(PanelSourceFoldersVisual.class, 
+				"LBL.ConfigureSourceRoots"));
+		this.putClientProperty("NewProjectWizard_Title", NbBundle.getMessage(
+				PanelSourceFoldersVisual.class, "title.ExtCompSourcesProjLocation"));
+		((FolderList)this.sourcePanel).setRelatedFolderList((FolderList)this.testsPanel, 
+				FolderList.testRootsFilter());
+		((FolderList)this.testsPanel).setRelatedFolderList((FolderList)this.sourcePanel);
 	}
 
 	@Override
@@ -99,18 +112,58 @@ public final class PanelSourceFoldersVisual extends SettingsPanel implements
 
 	@Override
 	void store(WizardDescriptor settings) {
-//		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		File[] sourceRoots = ((FolderList)this.sourcePanel).getFiles();
+		File[] testRoots = ((FolderList)this.testsPanel).getFiles();
+		settings.putProperty (ComponentDefinition.SRCROT,sourceRoots);
+		settings.putProperty(ComponentDefinition.TSTROT,testRoots);
 	}
 
 	@Override
 	void read(WizardDescriptor settings) {
-//		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		File projectLocation = (File) settings.getProperty(ComponentDefinition.PRJDIR);
+		((FolderList)this.sourcePanel).setProjectFolder(projectLocation);
+		((FolderList)this.testsPanel).setProjectFolder(projectLocation);
+		File[] srcRoot = (File[]) settings.getProperty (ComponentDefinition.SRCROT);
+		assert srcRoot != null : "sourceRoot property must be initialized!";	//NOI18N
+		File[] testRoot = (File[]) settings.getProperty (ComponentDefinition.TSTROT);
+		assert testRoot != null : "testRoot property must be initialized!";	//NOI18N
+		ComponentDefinition compDef = (ComponentDefinition)
+				settings.getProperty(ComponentDefinition.CMPDIR);
+		assert compDef != null : "compDef property must be initialized!" ;	//NOI18N
+		if (srcRoot.length == 0){
+			if (compDef.hasSrcDir()) {
+				srcRoot = new File[]{compDef.getSrcDir()};
+			}
+		}
+		if (testRoot.length == 0) {
+			if (compDef.hasUnitDir()) {
+				testRoot = new File[]{compDef.getUnitDir()};
+			}
+		}
+		((FolderList)this.sourcePanel).setFiles(srcRoot);
+		((FolderList)this.testsPanel).setFiles (testRoot);
+
+		File currentDirectory = null;
+		FileObject folder = Templates.getExistingSourcesFolder(settings);
+		if (folder != null){
+			currentDirectory = FileUtil.toFile(folder);
+		}
+		if (currentDirectory != null && currentDirectory.isDirectory()) {
+			((FolderList)sourcePanel).setLastUsedDir(currentDirectory);
+			((FolderList)testsPanel).setLastUsedDir(currentDirectory);
+		}
 	}
 
 	@Override
 	boolean valid(WizardDescriptor settings) {
+		File projectLocation = (File) settings.getProperty (ComponentDefinition.PRJDIR);
+		File[] sourceRoots = ((FolderList)this.sourcePanel).getFiles();
+		File[] testRoots = ((FolderList)this.testsPanel).getFiles();
+		if (sourceRoots.length == 0 && testRoots.length == 0) {
+			return false;
+		}
 //		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-		return false;
+		return true;
 	}
 
 	@Override
@@ -120,7 +173,15 @@ public final class PanelSourceFoldersVisual extends SettingsPanel implements
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-//		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if (FolderList.PROP_FILES.equals(evt.getPropertyName())) {
+			this.panel.fireChangeEvent();
+		} else if (FolderList.PROP_LAST_USED_DIR.equals (evt.getPropertyName())) {
+			if (evt.getSource() == this.sourcePanel) {
+				((FolderList)this.testsPanel).setLastUsedDir((File)evt.getNewValue());
+			} else if (evt.getSource() == this.testsPanel) {
+				((FolderList)this.sourcePanel).setLastUsedDir((File)evt.getNewValue());
+			}
+		}
 	}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

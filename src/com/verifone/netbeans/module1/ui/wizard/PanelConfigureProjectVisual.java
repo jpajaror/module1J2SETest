@@ -222,21 +222,21 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 		String name = projectNameTextField.getText().trim();
 		String folder = projectLocationTextField.getText().trim();
 
-		settings.putProperty("projdir", new File(folder));		//NOI18N
-		settings.putProperty("name", name);						//NOI18N
-		settings.putProperty("compdir", panelCompDef);			//NOI18N
+		settings.putProperty(ComponentDefinition.PRJDIR, new File(folder));
+		settings.putProperty(ComponentDefinition.NAME, name);
+		settings.putProperty(ComponentDefinition.CMPDIR, panelCompDef);
 	}
 
 	@Override
 	void read(WizardDescriptor settings) {
-		panelCompDef = (ComponentDefinition) settings.getProperty("compdir"); //NOI18N
+		panelCompDef = (ComponentDefinition) settings.getProperty(ComponentDefinition.CMPDIR);
 		String strCompLoc;
 		if (panelCompDef != null) {
 			strCompLoc = panelCompDef.getDirectoryString();
 		} else {
 			//Testing only remove this and set the focus here
-//			strCompLoc = "C:\\gitrepos\\petroApps\\isdApps\\vsmsV2\\sys\\util";
-			strCompLoc = "/Users/joswill/git/compTest";
+			strCompLoc = "C:\\gitrepos\\petroApps\\isdApps\\vsmsV2\\sys\\util";
+//			strCompLoc = "/Users/joswill/git/compTest";
 			try {
 				panelCompDef = new ComponentDefinition(strCompLoc);
 			} catch (IOException ex) { }
@@ -245,14 +245,14 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 		this.componentFolder.setText(strCompLoc);
 		setCalculateName(true);
 
-		String projectName = (String) settings.getProperty ("name"); //NOI18N
+		String projectName = (String) settings.getProperty (ComponentDefinition.NAME);
 		if (projectName != null) {
 			this.projectNameTextField.setText (projectName);
 		} else {
 			//Write default name... meanwhile
 		}
 
-		File projectLocation = (File) settings.getProperty("projdir");
+		File projectLocation = (File) settings.getProperty(ComponentDefinition.PRJDIR);
 		if (projectLocation == null || projectLocation.getParentFile() == null 
 				|| !projectLocation.getParentFile().isDirectory()) {
 			projectLocation = ProjectChooser.getProjectsFolder();
