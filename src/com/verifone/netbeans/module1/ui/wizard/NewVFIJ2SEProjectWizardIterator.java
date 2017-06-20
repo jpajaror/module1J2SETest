@@ -197,12 +197,12 @@ public final class NewVFIJ2SEProjectWizardIterator
 		handle.start (4);
 
 		Set<FileObject> resultSet = new HashSet<>();
-		File dirF = (File)myWiz.getProperty("projdir");				//NOI18N
+		File dirF = (File)myWiz.getProperty(ComponentDefinition.PRJDIR);
 		if (dirF == null) {
 			throw new NullPointerException ("projdir == null, props:" + myWiz.getProperties());
 		}
 		dirF = FileUtil.normalizeFile(dirF);
-		String name = (String)myWiz.getProperty("name");			//NOI18N
+		String name = (String)myWiz.getProperty(ComponentDefinition.NAME);
 //		String mainClass = (String)myWiz.getProperty("mainClass");	//NOI18N
 		String librariesDefinition = (String)myWiz.getProperty("sharedLibraries");
 //		String librariesDefinition = (String)myWiz.getProperty(PanelOptionsVisual.SHARED_LIBRARIES);
@@ -216,16 +216,16 @@ public final class NewVFIJ2SEProjectWizardIterator
 				"LBL.NewJ2SEProjectWizardIterator_WizardProgress_CreatingProject"), 1);
 
 		//Creating the project with the dirs
-		File[] sourceFolders = (File[])myWiz.getProperty("sourceRoot");			//NOI18N
-		File[] testFolders = (File[])myWiz.getProperty("testRoot");				//NOI18N
+		File[] sourceFolders = (File[])myWiz.getProperty(ComponentDefinition.SRCROT);
+		File[] testFolders = (File[])myWiz.getProperty(ComponentDefinition.TSTROT);
 		String buildScriptName = (String) myWiz.getProperty(PROP_BUILD_SCRIPT_NAME);
 		String distFolder = (String) myWiz.getProperty(PROP_DIST_FOLDER);
 		AntProjectHelper h = new J2SEProjectBuilder(dirF, name)
 			.addSourceRoots(sourceFolders)
 			.addTestRoots(testFolders)
-			.skipTests(testFolders.length == 0)
+			.skipTests(testFolders.length != 0)
 			.setManifest(MANIFEST_FILE)
-			.setLibrariesDefinitionFile(librariesDefinition)
+//			.setLibrariesDefinitionFile(librariesDefinition)
 			.setBuildXmlName(buildScriptName)
 			.setDistFolder(distFolder)
 			.build();

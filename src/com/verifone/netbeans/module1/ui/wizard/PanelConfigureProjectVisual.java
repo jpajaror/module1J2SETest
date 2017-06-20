@@ -220,7 +220,7 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 	void store(WizardDescriptor settings) {
 		//Executes after validate
 		String name = projectNameTextField.getText().trim();
-		String folder = projectLocationTextField.getText().trim();
+		String folder = createdFolderTextField.getText().trim();
 
 		settings.putProperty(ComponentDefinition.PRJDIR, new File(folder));
 		settings.putProperty(ComponentDefinition.NAME, name);
@@ -235,8 +235,8 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 			strCompLoc = panelCompDef.getDirectoryString();
 		} else {
 			//Testing only remove this and set the focus here
-			strCompLoc = "C:\\gitrepos\\petroApps\\isdApps\\vsmsV2\\sys\\util";
-//			strCompLoc = "/Users/joswill/git/compTest";
+//			strCompLoc = "C:\\gitrepos\\petroApps\\isdApps\\vsmsV2\\sys\\util";
+			strCompLoc = "/Users/joswill/git/compTest";
 			try {
 				panelCompDef = new ComponentDefinition(strCompLoc);
 			} catch (IOException ex) { }
@@ -256,6 +256,8 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 		if (projectLocation == null || projectLocation.getParentFile() == null 
 				|| !projectLocation.getParentFile().isDirectory()) {
 			projectLocation = ProjectChooser.getProjectsFolder();
+		} else {
+			projectLocation = projectLocation.getParentFile();
 		}
 		this.projectLocationTextField.setText(projectLocation.getAbsolutePath());
 
