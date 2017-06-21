@@ -18,6 +18,7 @@ import com.verifone.netbeans.module1.component.ComponentDefinition;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -26,10 +27,16 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
+import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.templates.TemplateRegistration;
+import org.netbeans.modules.java.api.common.project.ProjectProperties;
+import org.netbeans.modules.java.j2seproject.J2SEProjectUtil;
 import org.netbeans.modules.java.j2seproject.api.J2SEProjectBuilder;
+import org.netbeans.modules.java.j2seproject.ui.customizer.J2SEProjectProperties;
+import org.netbeans.spi.java.project.support.ui.SharableLibrariesUtils;
 import org.netbeans.spi.project.support.ant.AntProjectHelper;
+import org.netbeans.spi.project.support.ant.EditableProperties;
 import org.netbeans.spi.project.ui.support.ProjectChooser;
 import org.openide.WizardDescriptor;
 import org.openide.filesystems.FileObject;
@@ -231,20 +238,49 @@ public final class NewVFIJ2SEProjectWizardIterator
 			.build();
 
 		handle.progress (2);
+
+		EditableProperties ep = h.getProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH);
+		ep.setProperty(ProjectProperties.DO_DEPEND, "false");
+		ep.setProperty(ProjectProperties.DO_JAR, "false");
+		ep.setProperty(J2SEProjectProperties.MKDIST_DISABLED, "true");
+		ep.setProperty("run.test.classpath", new String[] { // NOI18N
+			ref(ProjectProperties.BUILD_TEST_CLASSES_DIR, false),
+			ref(ProjectProperties.JAVAC_TEST_CLASSPATH, true)
+		});
+		ep.setProperty(ProjectProperties.SOURCE_ENCODING, "UTF-8");
+		h.putProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH, ep);
+
+		handle.progress (3);
 		for (File f : sourceFolders) {
 			FileObject srcFo = FileUtil.toFileObject(f);
 			if (srcFo != null) {
 				resultSet.add (srcFo);
 			}
 		}
-		handle.progress (3);
+
 		handle.progress (NbBundle.getMessage (NewVFIJ2SEProjectWizardIterator.class,
 				"LBL.NewJ2SEProjectWizardIterator_WizardProgress_PreparingToOpen"), 4);
-		dirF = (dirF != null) ? dirF.getParentFile() : null;
+//		dirF = (dirF != null) ? dirF.getParentFile() : null;
 		if (dirF != null && dirF.exists()) {
 			ProjectChooser.setProjectsFolder (dirF);
 		}
 
+		SharableLibrariesUtils.setLastProjectSharable(true);
 		return resultSet;
+	}
+
+	/**
+	 * Creates reference to property.
+	 * @param propertyName the name of property
+	 * @param lastEntry if true, the path separator is not added
+	 * @return the reference
+	 */
+	public static String ref(
+			@NonNull final String propertyName,
+			final boolean lastEntry) {
+		return String.format(
+				"${%s}%s",  //NOI18N
+				propertyName,
+				lastEntry ? "" : ":");  //NOI18N
 	}
 }
