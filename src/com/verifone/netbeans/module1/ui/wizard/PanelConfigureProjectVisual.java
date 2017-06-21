@@ -47,7 +47,7 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 		this.panel = panel;
 		initComponents();
 		setName(NbBundle.getMessage(PanelConfigureProjectVisual.class,
-				"title.NAME_AND_LOCATION"));
+				"title.NAME_AND_LOCATION"));//NOI18N
 		componentFolder.getDocument().addDocumentListener(this);
 		projectNameTextField.getDocument().addDocumentListener(this);
 		projectLocationTextField.getDocument().addDocumentListener(this);
@@ -159,11 +159,11 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 
     private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseButtonActionPerformed
 		String command = evt.getActionCommand();
-		if ("BROWSE".equals(command)) {
+		if ("BROWSE".equals(command)) {//NOI18N
 			JFileChooser chooser = new JFileChooser();
 			FileUtil.preventFileChooserSymlinkTraversal(chooser, null);
 			chooser.setDialogTitle(NbBundle.getMessage(
-					PanelConfigureProjectVisual.class, "title.SelProjLoc"));
+					PanelConfigureProjectVisual.class, "title.SelProjLoc"));//NOI18N
 			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			String path = this.projectLocationTextField.getText();
 			if (path.length() > 0) {
@@ -182,11 +182,11 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 
     private void browseComponentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseComponentButtonActionPerformed
         String command = evt.getActionCommand();
-        if ("BROWSE".equals(command)) {
+        if ("BROWSE".equals(command)) {//NOI18N
             JFileChooser chooser = new JFileChooser();
             FileUtil.preventFileChooserSymlinkTraversal(chooser, null);
             chooser.setDialogTitle(NbBundle.getMessage(
-                PanelConfigureProjectVisual.class, "title.SelCompLoc"));
+                PanelConfigureProjectVisual.class, "title.SelCompLoc"));//NOI18N
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         String path = this.componentFolder.getText();
         if (path.length() > 0) {
@@ -268,14 +268,14 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 	boolean valid(WizardDescriptor descriptor) {
 		if (isIllegalName(projectNameTextField.getText())) {
 			descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE,
-				NbBundle.getMessage(PanelConfigureProjectVisual.class, "msg.InvProjName"));
+				NbBundle.getMessage(PanelConfigureProjectVisual.class, "msg.InvProjName"));//NOI18N
 			return false;
 		}
 
 		File f = new File(projectLocationTextField.getText()).getAbsoluteFile();
 		if (getCanonicalFile(f) == null) {
 			String message = NbBundle.getMessage(PanelConfigureProjectVisual.class,
-					"msg.IllegalProjLoc");
+					"msg.IllegalProjLoc");//NOI18N
 			descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, message);
 			return false;
 		}
@@ -284,7 +284,7 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 		File cfl = getCanonicalFile(new File(projectLocationTextField.getText()));
 		if (Utilities.isUnix() && cfl != null && cfl.getParentFile().getParent() == null) {
 			String message = NbBundle.getMessage(PanelConfigureProjectVisual.class,
-					"msg.ProjInRootNotSupported");
+					"msg.ProjInRootNotSupported");//NOI18N
 			descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, message);
 			return false;
 		}
@@ -292,7 +292,7 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 		final File destFolder = new File( projectLocationTextField.getText() ).getAbsoluteFile();
 		if (getCanonicalFile (destFolder) == null) {
 			String message = NbBundle.getMessage(PanelConfigureProjectVisual.class,
-					"msg.IllegalProjLoc");
+					"msg.IllegalProjLoc");//NOI18N
 			descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, message);
 			return false;
 		}
@@ -303,7 +303,7 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 		}
 		if (projLoc == null || !projLoc.canWrite()) {
 			String message = NbBundle.getMessage(PanelConfigureProjectVisual.class,
-					"msg.ProjFolderReadOnly");
+					"msg.ProjFolderReadOnly");//NOI18N
 			descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, message);
 			return false;
 		}
@@ -314,14 +314,14 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 			}
 			if (!panelCompDef.validateComponentDef()) {
 				String message = NbBundle.getMessage(PanelConfigureProjectVisual.class,
-						"msg.InvalidCompDefXML");
+						"msg.InvalidCompDefXML");//NOI18N
 				descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, message);
 				panelCompDef = null;
 				return false;
 			}
 		} catch (IOException ex) {
 			String message = NbBundle.getMessage(PanelConfigureProjectVisual.class,
-					"msg.InvalidCompFolder");
+					"msg.InvalidCompFolder");//NOI18N
 			descriptor.putProperty(WizardDescriptor.PROP_ERROR_MESSAGE, message);
 			panelCompDef = null;
 			return false;
