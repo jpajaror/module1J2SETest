@@ -41,9 +41,9 @@ public final class PanelSourceFoldersVisual extends SettingsPanel implements
 		this.sourcePanel.addPropertyChangeListener (this);
 		this.testsPanel.addPropertyChangeListener(this);
 		this.setName(NbBundle.getMessage(PanelSourceFoldersVisual.class, 
-				"LBL.ConfigureSourceRoots"));
-		this.putClientProperty("NewProjectWizard_Title", NbBundle.getMessage(
-				PanelSourceFoldersVisual.class, "title.ExtCompSourcesProjLocation"));
+				"LBL.ConfigureSourceRoots"));//NOI18N
+		this.putClientProperty("NewProjectWizard_Title", NbBundle.getMessage(			//NOI18N
+				PanelSourceFoldersVisual.class, "title.ExtCompSourcesProjLocation"));	//NOI18N
 		((FolderList)this.sourcePanel).setRelatedFolderList((FolderList)this.testsPanel, 
 				FolderList.testRootsFilter());
 		((FolderList)this.testsPanel).setRelatedFolderList((FolderList)this.sourcePanel);
@@ -63,22 +63,22 @@ public final class PanelSourceFoldersVisual extends SettingsPanel implements
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-		sourcePanel = new FolderList(NbBundle.getMessage(PanelSourceFoldersVisual.class, "lbl.SourceRoots"),
-				NbBundle.getMessage(PanelSourceFoldersVisual.class, "mne.SourceRoots").charAt(0),
-				NbBundle.getMessage(PanelSourceFoldersVisual.class, "AD.SourceRoots"),
-				NbBundle.getMessage(PanelSourceFoldersVisual.class, "title.AddSourceDiag"),
-				NbBundle.getMessage(PanelSourceFoldersVisual.class, "mne.AddSourceFolder").charAt(0),
-				NbBundle.getMessage(PanelSourceFoldersVisual.class, "caption.AddSourceFolder"),
-				NbBundle.getMessage(PanelSourceFoldersVisual.class, "mne.RemoveSourceFolder").charAt(0),
-				NbBundle.getMessage(PanelSourceFoldersVisual.class, "caption.RemoveSourceFolder"));
-		testsPanel = new FolderList(NbBundle.getMessage(PanelSourceFoldersVisual.class, "lbl.TestRoots"),
-				NbBundle.getMessage(PanelSourceFoldersVisual.class, "mne.TestRoots").charAt(0),
-				NbBundle.getMessage(PanelSourceFoldersVisual.class, "AD.TestRoots"),
-				NbBundle.getMessage(PanelSourceFoldersVisual.class, "title.AddTestDiag"),
-				NbBundle.getMessage(PanelSourceFoldersVisual.class, "mne.AddTestFolder").charAt(0),
-				NbBundle.getMessage(PanelSourceFoldersVisual.class, "caption.AddTestFolder"),
-				NbBundle.getMessage(PanelSourceFoldersVisual.class, "mne.RemoveTestFolder").charAt(0),
-				NbBundle.getMessage(PanelSourceFoldersVisual.class, "caption.RemoveTestFolder"));
+		sourcePanel = new FolderList(NbBundle.getMessage(PanelSourceFoldersVisual.class, "lbl.SourceRoots"),	//NOI18N
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "mne.SourceRoots").charAt(0),				//NOI18N
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "AD.SourceRoots"),							//NOI18N
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "title.AddSourceDiag"),					//NOI18N
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "mne.AddSourceFolder").charAt(0),			//NOI18N
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "caption.AddSourceFolder"),				//NOI18N
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "mne.RemoveSourceFolder").charAt(0),		//NOI18N
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "caption.RemoveSourceFolder"));			//NOI18N
+		testsPanel = new FolderList(NbBundle.getMessage(PanelSourceFoldersVisual.class, "lbl.TestRoots"),		//NOI18N
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "mne.TestRoots").charAt(0),				//NOI18N
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "AD.TestRoots"),							//NOI18N
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "title.AddTestDiag"),						//NOI18N
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "mne.AddTestFolder").charAt(0),			//NOI18N
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "caption.AddTestFolder"),					//NOI18N
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "mne.RemoveTestFolder").charAt(0),			//NOI18N
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "caption.RemoveTestFolder"));				//NOI18N
         jLabel2 = new javax.swing.JLabel();
 
         Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(PanelSourceFoldersVisual.class, "lbl.SpecifyNameNloc")); // NOI18N

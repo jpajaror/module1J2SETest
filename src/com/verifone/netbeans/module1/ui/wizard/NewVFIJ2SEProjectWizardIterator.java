@@ -38,10 +38,10 @@ import org.openide.util.NbBundle;
 
 @TemplateRegistration(folder = "Project/Verifone",
 					  position=100,
-					  displayName = "#template_existing",
+					  displayName = "#newVFI_existing",
 					  description = "../resources/existingProject.html",
 					  iconBase = "com/verifone/netbeans/module1/ui/resources/VFIIcon.png")
-@NbBundle.Messages("template_existing=Verifone Project from existing component2")
+@NbBundle.Messages("newVFI_existing=Verifone Project from existing component2")
 public final class NewVFIJ2SEProjectWizardIterator
 		implements WizardDescriptor.ProgressInstantiatingIterator<WizardDescriptor> {
 
