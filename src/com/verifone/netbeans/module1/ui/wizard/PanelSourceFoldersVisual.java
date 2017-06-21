@@ -25,6 +25,7 @@ import org.netbeans.spi.project.ui.templates.support.Templates;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle;
+import org.openide.awt.Mnemonics;
 
 public final class PanelSourceFoldersVisual extends SettingsPanel implements
 		PropertyChangeListener {
@@ -62,18 +63,27 @@ public final class PanelSourceFoldersVisual extends SettingsPanel implements
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-		sourcePanel = new FolderList("Sources", 'S', "SourcesADesc", "SourcesFCMess",
-			'A', "Add Source...", 'R', "Remove source");
-		testsPanel = new FolderList("Tests", 'T', "TestsADesc", "TestsFCMess",
-			'd', "Add Test...", 'm', "Remove test");
-		//(String label, char mnemonic, String accessibleDesc, String fcMessage,
-		//char addButtonMnemonic, String addButtonAccessibleDesc, char removeButtonMnemonic,
-		//String removeButtonAccessibleDesc)
+		sourcePanel = new FolderList(NbBundle.getMessage(PanelSourceFoldersVisual.class, "lbl.SourceRoots"),
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "mne.SourceRoots").charAt(0),
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "AD.SourceRoots"),
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "tip.AddSourceRoot"),
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "mne.AddSourceFolder").charAt(0),
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "caption.AddSourceFolder"),
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "mne.RemoveSourceFolder").charAt(0),
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "caption.RemoveSourceFolder"));
+		testsPanel = new FolderList(NbBundle.getMessage(PanelSourceFoldersVisual.class, "lbl.TestRoots"),
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "mne.TestRoots").charAt(0),
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "AD.TestRoots"),
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "tip.AddTestRoot"),
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "mne.AddTestFolder").charAt(0),
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "caption.AddTestFolder"),
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "mne.RemoveTestFolder").charAt(0),
+				NbBundle.getMessage(PanelSourceFoldersVisual.class, "caption.RemoveTestFolder"));
         jLabel2 = new javax.swing.JLabel();
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(PanelSourceFoldersVisual.class, "PanelSourceFoldersVisual.jLabel1.text")); // NOI18N
+        Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(PanelSourceFoldersVisual.class, "lbl.SpecifyNameNloc")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(PanelSourceFoldersVisual.class, "PanelSourceFoldersVisual.jLabel2.text")); // NOI18N
+        Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(PanelSourceFoldersVisual.class, "lbl.dragNdrop")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -88,7 +98,7 @@ public final class PanelSourceFoldersVisual extends SettingsPanel implements
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2))
-                        .addGap(0, 346, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -104,6 +114,9 @@ public final class PanelSourceFoldersVisual extends SettingsPanel implements
                 .addComponent(jLabel2)
                 .addContainerGap(16, Short.MAX_VALUE))
         );
+
+        jLabel1.getAccessibleContext().setAccessibleName(""); // NOI18N
+        jLabel2.getAccessibleContext().setAccessibleName(""); // NOI18N
     }// </editor-fold>//GEN-END:initComponents
 
 	void prepareValidation() {
@@ -187,7 +200,7 @@ public final class PanelSourceFoldersVisual extends SettingsPanel implements
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel sourcePanel;
-    private javax.swing.JPanel testsPanel;
+    private FolderList sourcePanel;
+    private FolderList testsPanel;
     // End of variables declaration//GEN-END:variables
 }
