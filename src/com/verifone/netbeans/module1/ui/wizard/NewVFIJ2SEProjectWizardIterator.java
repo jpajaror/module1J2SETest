@@ -18,7 +18,6 @@ import com.verifone.netbeans.module1.component.ComponentDefinition;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -31,7 +30,6 @@ import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.templates.TemplateRegistration;
 import org.netbeans.modules.java.api.common.project.ProjectProperties;
-import org.netbeans.modules.java.j2seproject.J2SEProjectUtil;
 import org.netbeans.modules.java.j2seproject.api.J2SEProjectBuilder;
 import org.netbeans.modules.java.j2seproject.ui.customizer.J2SEProjectProperties;
 import org.netbeans.spi.java.project.support.ui.SharableLibrariesUtils;
@@ -44,11 +42,11 @@ import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle;
 
 @TemplateRegistration(folder = "Project/Verifone",
-					  position=100,
+//					  position=10,
 					  displayName = "#newVFI_existing",
 					  description = "../resources/existingProject.html",
 					  iconBase = "com/verifone/netbeans/module1/ui/resources/VFIIcon.png")
-@NbBundle.Messages("newVFI_existing=Verifone Project from existing component2")
+@NbBundle.Messages("newVFI_existing=Verifone Project from existing component")
 public final class NewVFIJ2SEProjectWizardIterator
 		implements WizardDescriptor.ProgressInstantiatingIterator<WizardDescriptor> {
 
@@ -77,6 +75,9 @@ public final class NewVFIJ2SEProjectWizardIterator
 	static final String PROP_BUILD_SCRIPT_NAME = "buildScriptName";		//NOI18N
 	static final String PROP_DIST_FOLDER = "distFolder";				//NOI18N
 	private static final String MANIFEST_FILE = "manifest.mf";			// NOI18N
+
+	public NewVFIJ2SEProjectWizardIterator(){
+	}
 
 	@Override
 	public void initialize(WizardDescriptor wizard) {
@@ -196,12 +197,12 @@ public final class NewVFIJ2SEProjectWizardIterator
 	}//</editor-fold>
 
 	@Override
-	public Set instantiate(ProgressHandle handle) throws IOException {
+	public Set<FileObject> instantiate(ProgressHandle handle) throws IOException {
 		final WizardDescriptor myWiz = this.wiz;
 		if (myWiz == null) {
 			return Collections.emptySet();
 		}
-		handle.start (4);
+		handle.start(4);
 
 		Set<FileObject> resultSet = new HashSet<>();
 		File dirF = (File)myWiz.getProperty(ComponentDefinition.PRJDIR);
@@ -219,7 +220,7 @@ public final class NewVFIJ2SEProjectWizardIterator
 //			}
 //			librariesDefinition += SharableLibrariesUtils.DEFAULT_LIBRARIES_FILENAME;
 //		}
-		handle.progress (NbBundle.getMessage (NewVFIJ2SEProjectWizardIterator.class,
+		handle.progress(NbBundle.getMessage (NewVFIJ2SEProjectWizardIterator.class,
 				"LBL.NewJ2SEProjectWizardIterator_WizardProgress_CreatingProject"), 1);
 
 		//Creating the project with the dirs
@@ -227,6 +228,7 @@ public final class NewVFIJ2SEProjectWizardIterator
 		File[] testFolders = (File[])myWiz.getProperty(ComponentDefinition.TSTROT);
 		String buildScriptName = (String) myWiz.getProperty(PROP_BUILD_SCRIPT_NAME);
 		String distFolder = (String) myWiz.getProperty(PROP_DIST_FOLDER);
+		Boolean buildJar = (Boolean) myWiz.getProperty(ComponentDefinition.BLDJAR);
 		AntProjectHelper h = new J2SEProjectBuilder(dirF, name)
 			.addSourceRoots(sourceFolders)
 			.addTestRoots(testFolders)
@@ -237,17 +239,25 @@ public final class NewVFIJ2SEProjectWizardIterator
 			.setDistFolder(distFolder)
 			.build();
 
-		handle.progress (2);
+		handle.progress(NbBundle.getMessage (NewVFIJ2SEProjectWizardIterator.class,
+				"LBL.NewJ2SEProjectWizardIterator_WizardProgress_SettingProps"),2);
 
 		EditableProperties ep = h.getProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH);
-		ep.setProperty(ProjectProperties.DO_DEPEND, "false");
-		ep.setProperty(ProjectProperties.DO_JAR, "false");
-		ep.setProperty(J2SEProjectProperties.MKDIST_DISABLED, "true");
+		ep.setProperty(ProjectProperties.DO_DEPEND, "false");// NOI18N
+		ep.setProperty(ProjectProperties.DO_JAR, buildJar.toString());
+		ep.setProperty(ProjectProperties.NO_DEPENDENCIES, "true");// NOI18N
+		ep.setProperty(J2SEProjectProperties.MKDIST_DISABLED, "true");// NOI18N
+
+		//classpath
 		ep.setProperty("run.test.classpath", new String[] { // NOI18N
 			ref(ProjectProperties.BUILD_TEST_CLASSES_DIR, false),
 			ref(ProjectProperties.JAVAC_TEST_CLASSPATH, true)
 		});
-		ep.setProperty(ProjectProperties.SOURCE_ENCODING, "UTF-8");
+		ep.setProperty("javac.test.classpath", new String[] { // NOI18N
+			ref(ProjectProperties.BUILD_CLASSES_DIR, false),
+			ref(ProjectProperties.JAVAC_CLASSPATH, true)
+		});
+		ep.setProperty(ProjectProperties.SOURCE_ENCODING, "UTF-8");// NOI18N
 		h.putProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH, ep);
 
 		handle.progress (3);
@@ -260,12 +270,14 @@ public final class NewVFIJ2SEProjectWizardIterator
 
 		handle.progress (NbBundle.getMessage (NewVFIJ2SEProjectWizardIterator.class,
 				"LBL.NewJ2SEProjectWizardIterator_WizardProgress_PreparingToOpen"), 4);
-//		dirF = (dirF != null) ? dirF.getParentFile() : null;
-		if (dirF != null && dirF.exists()) {
-			ProjectChooser.setProjectsFolder (dirF);
+		resultSet.add(FileUtil.toFileObject(dirF)); //Open project
+
+		File parent = (dirF != null) ? dirF.getParentFile() : null;
+		if (parent != null && parent.exists()) {
+			ProjectChooser.setProjectsFolder (parent);
 		}
 
-		SharableLibrariesUtils.setLastProjectSharable(true);
+		SharableLibrariesUtils.setLastProjectSharable(false);
 		return resultSet;
 	}
 

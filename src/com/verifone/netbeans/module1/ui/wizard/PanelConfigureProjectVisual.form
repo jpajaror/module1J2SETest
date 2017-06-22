@@ -19,22 +19,30 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="projectNameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="projectLocationLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="createdFolderLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="componentFolderLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="componentFolder" alignment="1" max="32767" attributes="0"/>
-                  <Component id="createdFolderTextField" alignment="1" max="32767" attributes="0"/>
-                  <Component id="projectLocationTextField" alignment="1" max="32767" attributes="0"/>
-                  <Component id="projectNameTextField" alignment="1" pref="336" max="32767" attributes="0"/>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="browseButton" min="-2" max="-2" attributes="0"/>
-                  <Component id="browseComponentButton" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="jCheckBox1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="projectNameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="projectLocationLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="createdFolderLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="componentFolderLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="componentFolder" alignment="1" max="32767" attributes="0"/>
+                          <Component id="createdFolderTextField" alignment="1" max="32767" attributes="0"/>
+                          <Component id="projectLocationTextField" alignment="1" max="32767" attributes="0"/>
+                          <Component id="projectNameTextField" alignment="1" pref="336" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="browseButton" min="-2" max="-2" attributes="0"/>
+                          <Component id="browseComponentButton" alignment="1" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -65,7 +73,9 @@
                   <Component id="projectLocationLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="createdFolderTextField" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="166" max="32767" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="jCheckBox1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="136" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -152,6 +162,13 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="browseComponentButtonActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="jCheckBox1">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="com/verifone/netbeans/module1/ui/wizard/Bundle.properties" key="PanelConfigureProjectVisual.lbl.buildJAR" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>
