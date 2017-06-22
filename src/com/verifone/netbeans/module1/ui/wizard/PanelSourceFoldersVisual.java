@@ -154,7 +154,7 @@ public final class PanelSourceFoldersVisual extends SettingsPanel implements
 			}
 		}
 		((FolderList)this.sourcePanel).setFiles(srcRoot);
-		((FolderList)this.testsPanel).setFiles (testRoot);
+		((FolderList)this.testsPanel).setFiles(testRoot);
 
 		File currentDirectory = null;
 		FileObject folder = Templates.getExistingSourcesFolder(settings);

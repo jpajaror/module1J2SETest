@@ -230,6 +230,7 @@ public final class NewVFIJ2SEProjectWizardIterator
 		String distFolder = (String) myWiz.getProperty(PROP_DIST_FOLDER);
 		Boolean buildJar = (Boolean) myWiz.getProperty(ComponentDefinition.BLDJAR);
 		AntProjectHelper h = new J2SEProjectBuilder(dirF, name)
+//			.addDefaultSourceRoots()
 			.addSourceRoots(sourceFolders)
 			.addTestRoots(testFolders)
 			.skipTests(testFolders.length != 0)
@@ -287,8 +288,7 @@ public final class NewVFIJ2SEProjectWizardIterator
 	 * @param lastEntry if true, the path separator is not added
 	 * @return the reference
 	 */
-	public static String ref(
-			@NonNull final String propertyName,
+	public static String ref(@NonNull final String propertyName,
 			final boolean lastEntry) {
 		return String.format(
 				"${%s}%s",  //NOI18N
