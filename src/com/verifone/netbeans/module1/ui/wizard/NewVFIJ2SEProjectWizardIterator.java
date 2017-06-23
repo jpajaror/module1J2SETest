@@ -213,7 +213,6 @@ public final class NewVFIJ2SEProjectWizardIterator
 		}
 		dirF = FileUtil.normalizeFile(dirF);
 		String name = (String)myWiz.getProperty(ComponentDefinition.NAME);
-//		String mainClass = (String)myWiz.getProperty("mainClass");	//NOI18N
 		String librariesDefinition = (String)myWiz.getProperty("sharedLibraries");
 //		String librariesDefinition = (String)myWiz.getProperty(PanelOptionsVisual.SHARED_LIBRARIES);
 //		if (librariesDefinition != null) {
@@ -228,18 +227,8 @@ public final class NewVFIJ2SEProjectWizardIterator
 		//Creating the project with the dirs
 		File[] sourceFolders = (File[])myWiz.getProperty(ComponentDefinition.SRCROT);
 		File[] testFolders = (File[])myWiz.getProperty(ComponentDefinition.TSTROT);
-//		String buildScriptName = (String) myWiz.getProperty(PROP_BUILD_SCRIPT_NAME);
 		String distFolder = (String) myWiz.getProperty(PROP_DIST_FOLDER);
-//		AntProjectHelper h = new J2SEProjectBuilder(dirF, name)
-////			.addDefaultSourceRoots()
-//			.addSourceRoots(sourceFolders)
-//			.addTestRoots(testFolders)
-//			.skipTests(testFolders.length != 0)
-//			.setManifest(MANIFEST_FILE)
-////			.setLibrariesDefinitionFile(librariesDefinition)
-//			.setBuildXmlName(buildScriptName)
-//			.setDistFolder(distFolder)
-//			.build();
+
 		AntProjectHelper h = createProject(dirF, name, sourceFolders,
 				testFolders, distFolder);
 
@@ -247,6 +236,7 @@ public final class NewVFIJ2SEProjectWizardIterator
 				"LBL.NewJ2SEProjectWizardIterator_WizardProgress_SettingProps"),2);
 
 		writeProperties(h, myWiz);
+		writePrivateProperties(h, myWiz);
 
 		EditableProperties ep = h.getProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH);
 		//classpath
@@ -312,22 +302,20 @@ public final class NewVFIJ2SEProjectWizardIterator
 			.build();
 	}
 
-	private void writeProperties(AntProjectHelper h, WizardDescriptor myWiz) {
+	private void writeProperties(AntProjectHelper h, WizardDescriptor wiz) {
 		EditableProperties ep = h.getProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH);
 		ep.setProperty(ProjectProperties.DO_DEPEND, "false");// NOI18N
 
-		Boolean buildJar = (Boolean) myWiz.getProperty(ComponentDefinition.BLDJAR);
-		ep.setProperty(ProjectProperties.DO_JAR, buildJar.toString());
 		ep.setProperty(ProjectProperties.NO_DEPENDENCIES, "true");// NOI18N
 		ep.setProperty(J2SEProjectProperties.MKDIST_DISABLED, "true");// NOI18N
 
 		//Include & excludes
-		String includes = (String) myWiz.getProperty(ProjectProperties.INCLUDES);
+		String includes = (String) wiz.getProperty(ProjectProperties.INCLUDES);
 		if (includes == null) {
 			includes = "**"; // NOI18N
 		}
 		ep.setProperty(ProjectProperties.INCLUDES, includes);
-		String excludes = (String) myWiz.getProperty(ProjectProperties.EXCLUDES);
+		String excludes = (String) wiz.getProperty(ProjectProperties.EXCLUDES);
 		if (excludes == null) {
 			excludes = ""; // NOI18N
 		}
@@ -338,9 +326,12 @@ public final class NewVFIJ2SEProjectWizardIterator
 		h.putProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH, ep);
 	}
 
-	private void writePrivateProperties(AntProjectHelper h, WizardDescriptor myWiz) {
+	private void writePrivateProperties(AntProjectHelper h, WizardDescriptor wiz) {
 		EditableProperties ep = h.getProperties(AntProjectHelper.PRIVATE_PROPERTIES_PATH);
 		//write private properties here
+		Boolean buildJar = (Boolean) wiz.getProperty(ComponentDefinition.BLDJAR);
+		ep.setProperty(ProjectProperties.DO_JAR, buildJar.toString());
+
 		h.putProperties(AntProjectHelper.PRIVATE_PROPERTIES_PATH, ep);
 	}
 }
