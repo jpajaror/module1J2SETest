@@ -72,7 +72,7 @@ public final class NewVFIJ2SEProjectWizardIterator
 	private List<WizardDescriptor.Panel<WizardDescriptor>> panels;
 	private transient volatile WizardDescriptor wiz;
 
-	static final String PROP_BUILD_SCRIPT_NAME = "buildScriptName";		//NOI18N
+//	static final String PROP_BUILD_SCRIPT_NAME = "buildScriptName";		//NOI18N
 	static final String PROP_DIST_FOLDER = "distFolder";				//NOI18N
 	private static final String MANIFEST_FILE = "manifest.mf";			// NOI18N
 
@@ -228,29 +228,27 @@ public final class NewVFIJ2SEProjectWizardIterator
 		//Creating the project with the dirs
 		File[] sourceFolders = (File[])myWiz.getProperty(ComponentDefinition.SRCROT);
 		File[] testFolders = (File[])myWiz.getProperty(ComponentDefinition.TSTROT);
-		String buildScriptName = (String) myWiz.getProperty(PROP_BUILD_SCRIPT_NAME);
+//		String buildScriptName = (String) myWiz.getProperty(PROP_BUILD_SCRIPT_NAME);
 		String distFolder = (String) myWiz.getProperty(PROP_DIST_FOLDER);
-		Boolean buildJar = (Boolean) myWiz.getProperty(ComponentDefinition.BLDJAR);
-		AntProjectHelper h = new J2SEProjectBuilder(dirF, name)
-//			.addDefaultSourceRoots()
-			.addSourceRoots(sourceFolders)
-			.addTestRoots(testFolders)
-			.skipTests(testFolders.length != 0)
-			.setManifest(MANIFEST_FILE)
-//			.setLibrariesDefinitionFile(librariesDefinition)
-			.setBuildXmlName(buildScriptName)
-			.setDistFolder(distFolder)
-			.build();
+//		AntProjectHelper h = new J2SEProjectBuilder(dirF, name)
+////			.addDefaultSourceRoots()
+//			.addSourceRoots(sourceFolders)
+//			.addTestRoots(testFolders)
+//			.skipTests(testFolders.length != 0)
+//			.setManifest(MANIFEST_FILE)
+////			.setLibrariesDefinitionFile(librariesDefinition)
+//			.setBuildXmlName(buildScriptName)
+//			.setDistFolder(distFolder)
+//			.build();
+		AntProjectHelper h = createProject(dirF, name, sourceFolders,
+				testFolders, distFolder);
 
 		handle.progress(NbBundle.getMessage (NewVFIJ2SEProjectWizardIterator.class,
 				"LBL.NewJ2SEProjectWizardIterator_WizardProgress_SettingProps"),2);
 
-		EditableProperties ep = h.getProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH);
-		ep.setProperty(ProjectProperties.DO_DEPEND, "false");// NOI18N
-		ep.setProperty(ProjectProperties.DO_JAR, buildJar.toString());
-		ep.setProperty(ProjectProperties.NO_DEPENDENCIES, "true");// NOI18N
-		ep.setProperty(J2SEProjectProperties.MKDIST_DISABLED, "true");// NOI18N
+		writeProperties(h, myWiz);
 
+		EditableProperties ep = h.getProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH);
 		//classpath
 		ep.setProperty("run.test.classpath", new String[] { // NOI18N
 			ref(ProjectProperties.BUILD_TEST_CLASSES_DIR, false),
@@ -260,19 +258,6 @@ public final class NewVFIJ2SEProjectWizardIterator
 			ref(ProjectProperties.BUILD_CLASSES_DIR, false),
 			ref(ProjectProperties.JAVAC_CLASSPATH, true)
 		});
-		ep.setProperty(ProjectProperties.SOURCE_ENCODING, "UTF-8");// NOI18N
-
-		//Include & excludes
-		String includes = (String) myWiz.getProperty(ProjectProperties.INCLUDES);
-		if (includes == null) {
-			includes = "**"; // NOI18N
-		}
-		ep.setProperty(ProjectProperties.INCLUDES, includes);
-		String excludes = (String) myWiz.getProperty(ProjectProperties.EXCLUDES);
-		if (excludes == null) {
-			excludes = ""; // NOI18N
-		}
-		ep.setProperty(ProjectProperties.EXCLUDES, excludes);
 		h.putProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH, ep);
 
 		handle.progress (3);
@@ -308,5 +293,54 @@ public final class NewVFIJ2SEProjectWizardIterator
 				"${%s}%s",  //NOI18N
 				propertyName,
 				lastEntry ? "" : ":");  //NOI18N
+	}
+
+	private AntProjectHelper createProject(File dirF, String name, File[] sourceFolders,
+			File[] testFolders, String distFolder) throws IOException{
+//		String buildScriptName = (String) myWiz.getProperty(PROP_BUILD_SCRIPT_NAME);
+//		String distFolder = (String) myWiz.getProperty(PROP_DIST_FOLDER);
+//		Boolean buildJar = (Boolean) myWiz.getProperty(ComponentDefinition.BLDJAR);
+		return new J2SEProjectBuilder(dirF, name)
+//			.addDefaultSourceRoots()
+			.addSourceRoots(sourceFolders)
+			.addTestRoots(testFolders)
+			.skipTests(testFolders.length != 0)
+			.setManifest(MANIFEST_FILE)
+//			.setLibrariesDefinitionFile(librariesDefinition)
+//			.setBuildXmlName(buildScriptName)
+			.setDistFolder(distFolder)
+			.build();
+	}
+
+	private void writeProperties(AntProjectHelper h, WizardDescriptor myWiz) {
+		EditableProperties ep = h.getProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH);
+		ep.setProperty(ProjectProperties.DO_DEPEND, "false");// NOI18N
+
+		Boolean buildJar = (Boolean) myWiz.getProperty(ComponentDefinition.BLDJAR);
+		ep.setProperty(ProjectProperties.DO_JAR, buildJar.toString());
+		ep.setProperty(ProjectProperties.NO_DEPENDENCIES, "true");// NOI18N
+		ep.setProperty(J2SEProjectProperties.MKDIST_DISABLED, "true");// NOI18N
+
+		//Include & excludes
+		String includes = (String) myWiz.getProperty(ProjectProperties.INCLUDES);
+		if (includes == null) {
+			includes = "**"; // NOI18N
+		}
+		ep.setProperty(ProjectProperties.INCLUDES, includes);
+		String excludes = (String) myWiz.getProperty(ProjectProperties.EXCLUDES);
+		if (excludes == null) {
+			excludes = ""; // NOI18N
+		}
+		ep.setProperty(ProjectProperties.EXCLUDES, excludes);
+
+		ep.setProperty(ProjectProperties.SOURCE_ENCODING, "UTF-8");// NOI18N
+
+		h.putProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH, ep);
+	}
+
+	private void writePrivateProperties(AntProjectHelper h, WizardDescriptor myWiz) {
+		EditableProperties ep = h.getProperties(AntProjectHelper.PRIVATE_PROPERTIES_PATH);
+		//write private properties here
+		h.putProperties(AntProjectHelper.PRIVATE_PROPERTIES_PATH, ep);
 	}
 }
