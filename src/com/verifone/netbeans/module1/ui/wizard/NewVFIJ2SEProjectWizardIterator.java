@@ -107,6 +107,7 @@ public final class NewVFIJ2SEProjectWizardIterator
 //		panels.add(new PanelExistingComponent());
 		panels.add(new PanelConfigureProject());
 		panels.add(new PanelSourceFolders());
+		panels.add(new PanelIncludesExcludes());
 //TODO: Clean
 //		if (panels == null) {
 //			panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
@@ -135,6 +136,7 @@ public final class NewVFIJ2SEProjectWizardIterator
 //			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LBL.ConfigureExistingComponent"),
 			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LBL.ConfigureProject"),
 			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LBL.ConfigureSourceRoots"),
+			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LBL.PanelIncludeExcludes"),
 		};
 	}
 
@@ -259,6 +261,18 @@ public final class NewVFIJ2SEProjectWizardIterator
 			ref(ProjectProperties.JAVAC_CLASSPATH, true)
 		});
 		ep.setProperty(ProjectProperties.SOURCE_ENCODING, "UTF-8");// NOI18N
+
+		//Include & excludes
+		String includes = (String) myWiz.getProperty(ProjectProperties.INCLUDES);
+		if (includes == null) {
+			includes = "**"; // NOI18N
+		}
+		ep.setProperty(ProjectProperties.INCLUDES, includes);
+		String excludes = (String) myWiz.getProperty(ProjectProperties.EXCLUDES);
+		if (excludes == null) {
+			excludes = ""; // NOI18N
+		}
+		ep.setProperty(ProjectProperties.EXCLUDES, excludes);
 		h.putProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH, ep);
 
 		handle.progress (3);
