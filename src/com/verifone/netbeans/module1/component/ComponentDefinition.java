@@ -47,6 +47,7 @@ public class ComponentDefinition {
 	private File compDirF;
 	private File compDefF;
 	private File srcDir, unitDir;
+	private Document xmlDoc;
 
 	public ComponentDefinition(String dir) throws IOException {
 		compDirF=new File(dir);
@@ -75,14 +76,16 @@ public class ComponentDefinition {
 	}
 
 	public List<String> readComponentDef() throws IOException, SAXException,
-			XPathExpressionException{
+			XPathExpressionException {
 		List<String> dependencies= new ArrayList<>();
 
-		Document doc = XMLUtil.parse(new InputSource(
-				new FileInputStream(compDefF)), false, false, null, null);
+		if (xmlDoc == null) {
+			xmlDoc = XMLUtil.parse(new InputSource(
+					new FileInputStream(compDefF)), false, false, null, null);
+		}
 		XPath xPath = XPathFactory.newInstance().newXPath();
 		NodeList nodes = (NodeList) xPath.evaluate("/componentDef/componentDef",//NOI18N
-				doc, XPathConstants.NODESET);
+				xmlDoc, XPathConstants.NODESET);
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Element elem = (Element) nodes.item(i);
 			dependencies.add(elem.getAttribute("name"));
@@ -92,13 +95,15 @@ public class ComponentDefinition {
 	}
 
 	public String getComponentName() throws IOException, SAXException,
-			XPathExpressionException{
+			XPathExpressionException {
 		String name="";
 
-		Document doc = XMLUtil.parse(new InputSource(
-				new FileInputStream(compDefF)), false, false, null, null);
+		if (xmlDoc == null) {
+			xmlDoc = XMLUtil.parse(new InputSource(
+					new FileInputStream(compDefF)), false, false, null, null);
+		}
 		XPath xPath = XPathFactory.newInstance().newXPath();
-		name = (String) xPath.evaluate("/componentDef/@name", doc,//NOI18N
+		name = (String) xPath.evaluate("/componentDef/@name", xmlDoc,//NOI18N
 				XPathConstants.STRING);
 		if ((null == name) || (name.isEmpty())){
 			return null;
