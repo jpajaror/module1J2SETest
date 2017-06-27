@@ -14,9 +14,9 @@
  */
 package com.verifone.netbeans.module1.ui.wizard;
 
-import java.awt.Component;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
+import org.openide.util.ChangeSupport;
 import org.openide.util.HelpCtx;
 
 /**
@@ -25,44 +25,54 @@ import org.openide.util.HelpCtx;
  */
 public class PanelDependencies implements WizardDescriptor.FinishablePanel {
 
+	private PanelDependenciesVisual component;
+	private WizardDescriptor descriptor;
+	private final ChangeSupport changeSupport = new ChangeSupport(this);
+
 	@Override
 	public boolean isFinishPanel() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return true;
 	}
 
 	@Override
-	public Component getComponent() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public PanelDependenciesVisual getComponent() {
+		if (component == null) {
+			component = new PanelDependenciesVisual(this);
+		}
+		return component;
 	}
 
 	@Override
 	public HelpCtx getHelp() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return new HelpCtx(PanelDependencies.class.getName());
 	}
 
 	@Override
 	public void readSettings(Object settings) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		descriptor = (WizardDescriptor) settings;
+		component.read(descriptor);
 	}
 
 	@Override
 	public void storeSettings(Object settings) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		descriptor = (WizardDescriptor) settings;
+		component.store(descriptor);
 	}
 
 	@Override
 	public boolean isValid() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		getComponent();
+		return component.valid(descriptor);
 	}
 
 	@Override
 	public void addChangeListener(ChangeListener l) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		changeSupport.addChangeListener(l);
 	}
 
 	@Override
 	public void removeChangeListener(ChangeListener l) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		changeSupport.removeChangeListener(l);
 	}
 	
 }

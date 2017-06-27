@@ -248,8 +248,8 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 			strCompLoc = panelCompDef.getDirectoryString();
 		} else {
 			//Testing only remove this and set the focus here
-//			strCompLoc = "C:\\gitrepos\\petroApps\\isdApps\\vsmsV2\\sys\\util";
-			strCompLoc = "/Users/joswill/git/compTest";
+			strCompLoc = "C:\\gitrepos\\petroApps\\isdApps\\vsmsV2\\sys\\util";
+//			strCompLoc = "/Users/joswill/git/compTest";
 			try {
 				panelCompDef = new ComponentDefinition(strCompLoc);
 			} catch (IOException ex) { }

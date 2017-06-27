@@ -104,10 +104,10 @@ public final class NewVFIJ2SEProjectWizardIterator
 
 	private List<WizardDescriptor.Panel<WizardDescriptor>> createPanels() {
 		panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
-//		panels.add(new PanelExistingComponent());
 		panels.add(new PanelConfigureProject());
 		panels.add(new PanelSourceFolders());
 		panels.add(new PanelIncludesExcludes());
+		panels.add(new PanelDependencies());
 //TODO: Clean
 //		if (panels == null) {
 //			panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
@@ -137,6 +137,7 @@ public final class NewVFIJ2SEProjectWizardIterator
 			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LBL.ConfigureProject"),
 			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LBL.ConfigureSourceRoots"),
 			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LBL.PanelIncludeExcludes"),
+			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LBL.PanelDependencies"),
 		};
 	}
 
