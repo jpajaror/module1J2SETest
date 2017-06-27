@@ -1,15 +1,15 @@
 /*
  * PanelIncludesExcludes.java
- * Created by: JoswillP1
+ * Created by: JP1
  *
- * COPYRIGHT (c) 2017 by VeriFone Inc., All Rights Reserved.
+ * COPYRIGHT (c) 2017 by JPR, All Rights Reserved.
  *
  *                       N O T I C E
  *
  * Under Federal copyright law, neither the software nor accompanying
  * documentation may be copied, photocopied, reproduced, translated,
  * or reduced to any electronic medium or machine-readable form, in
- * whole or in part, without the prior written consent of VeriFone Inc.,
+ * whole or in part, without the prior written consent of JPR,
  * except in the manner described in the documentation.
  */
 package com.verifone.netbeans.module1.ui.wizard;
@@ -24,7 +24,7 @@ import org.openide.util.HelpCtx;
 
 /**
  *
- * @author JoswillP1
+ * @author JP1
  */
 public class PanelIncludesExcludes implements WizardDescriptor.FinishablePanel {
 	private final IncludeExcludeVisualizer viz;
