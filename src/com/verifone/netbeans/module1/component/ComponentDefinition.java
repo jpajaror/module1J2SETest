@@ -80,15 +80,17 @@ public class ComponentDefinition {
 		List<String> dependencies= new ArrayList<>();
 
 		if (xmlDoc == null) {
-			xmlDoc = XMLUtil.parse(new InputSource(
-					new FileInputStream(compDefF)), false, false, null, null);
+			xmlDoc = XMLUtil.parse(new InputSource(new FileInputStream(compDefF)),
+					false, false, null, null);
 		}
 		XPath xPath = XPathFactory.newInstance().newXPath();
 		NodeList nodes = (NodeList) xPath.evaluate("/componentDef/componentDef",//NOI18N
 				xmlDoc, XPathConstants.NODESET);
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Element elem = (Element) nodes.item(i);
-			dependencies.add(elem.getAttribute("name"));
+			String name=elem.getAttribute("name").substring(1)
+					.replaceAll("/", ".");
+			dependencies.add(name);
 		}
 
 		return dependencies;
@@ -99,8 +101,8 @@ public class ComponentDefinition {
 		String name="";
 
 		if (xmlDoc == null) {
-			xmlDoc = XMLUtil.parse(new InputSource(
-					new FileInputStream(compDefF)), false, false, null, null);
+			xmlDoc = XMLUtil.parse(new InputSource(new FileInputStream(compDefF)),
+					false, false, null, null);
 		}
 		XPath xPath = XPathFactory.newInstance().newXPath();
 		name = (String) xPath.evaluate("/componentDef/@name", xmlDoc,//NOI18N

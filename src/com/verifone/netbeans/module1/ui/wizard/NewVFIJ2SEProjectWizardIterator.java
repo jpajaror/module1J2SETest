@@ -41,12 +41,12 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle;
 
-@TemplateRegistration(folder = "Project/Verifone",
+@TemplateRegistration(folder = "Project/VF",
 //					  position=10,
 					  displayName = "#newVFI_existing",
 					  description = "../resources/existingProject.html",
 					  iconBase = "com/verifone/netbeans/module1/ui/resources/VFIIcon.png")
-@NbBundle.Messages("newVFI_existing=Verifone Project from existing component")
+@NbBundle.Messages("newVFI_existing=VF Project from existing component")
 public final class NewVFIJ2SEProjectWizardIterator
 		implements WizardDescriptor.ProgressInstantiatingIterator<WizardDescriptor> {
 
@@ -103,37 +103,17 @@ public final class NewVFIJ2SEProjectWizardIterator
 	}
 
 	private List<WizardDescriptor.Panel<WizardDescriptor>> createPanels() {
-		panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
+		panels = new ArrayList<>();
 		panels.add(new PanelConfigureProject());
 		panels.add(new PanelSourceFolders());
 		panels.add(new PanelIncludesExcludes());
 		panels.add(new PanelDependencies());
-//TODO: Clean
-//		if (panels == null) {
-//			panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
-//			panels.add(new NewVFIJ2SEProjectWizardPanel1());
-//			panels.add(new PanelSourceFolders());
-//			String[] steps = new String[panels.size()];
-//			for (int i = 0; i < panels.size(); i++) {
-//				Component c = panels.get(i).getComponent();
-//				// Default step name to component name of panel.
-//				steps[i] = c.getName();
-//				if (c instanceof JComponent) { // assume Swing components
-//					JComponent jc = (JComponent) c;
-//					jc.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, i);
-//					jc.putClientProperty(WizardDescriptor.PROP_CONTENT_DATA, steps);
-//					jc.putClientProperty(WizardDescriptor.PROP_AUTO_WIZARD_STYLE, true);
-//					jc.putClientProperty(WizardDescriptor.PROP_CONTENT_DISPLAYED, true);
-//					jc.putClientProperty(WizardDescriptor.PROP_CONTENT_NUMBERED, true);
-//				}
-//			}
-//		}
+
 		return panels;
 	}
 
 	private String[] createSteps() {
 		return new String[] {
-//			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LBL.ConfigureExistingComponent"),
 			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LBL.ConfigureProject"),
 			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LBL.ConfigureSourceRoots"),
 			NbBundle.getMessage(NewVFIJ2SEProjectWizardIterator.class,"LBL.PanelIncludeExcludes"),

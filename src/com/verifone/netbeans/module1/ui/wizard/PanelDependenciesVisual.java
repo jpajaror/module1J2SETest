@@ -39,6 +39,11 @@ public class PanelDependenciesVisual extends SettingsPanel {
 		initComponents();
 	}
 
+	@Override
+	public String getName() {
+		return "Step #4";
+	}
+
 	/**
 	 * This method is called from within the constructor to initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is always
