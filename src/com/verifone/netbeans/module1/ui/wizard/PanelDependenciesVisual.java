@@ -15,12 +15,20 @@
 package com.verifone.netbeans.module1.ui.wizard;
 
 import com.verifone.netbeans.module1.component.ComponentDefinition;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.xml.xpath.XPathExpressionException;
+import org.netbeans.api.project.Project;
+import org.netbeans.api.project.ProjectManager;
+import org.netbeans.api.project.libraries.Library;
+import org.netbeans.api.project.libraries.LibraryManager;
 import org.openide.WizardDescriptor;
 import org.openide.WizardValidationException;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.xml.sax.SAXException;
 
 /**
@@ -111,9 +119,31 @@ public class PanelDependenciesVisual extends SettingsPanel {
 	@Override
 	void read(WizardDescriptor settings) {
 		panelCompDef = (ComponentDefinition) settings.getProperty(ComponentDefinition.CMPDIR);
+		File prjDir = (File) settings.getProperty(ComponentDefinition.PRJDIR);
 		try {
 			List<String> otherComp=panelCompDef.readComponentDef();
-			jList1.setListData((String[])otherComp.toArray(new String[0]));
+			List<String> foundDeps=new ArrayList<>();
+			LibraryManager man = LibraryManager.getDefault();
+			ProjectManager proMan=ProjectManager.getDefault();
+			File rootDir=prjDir.getParentFile();
+			String found = " (found)";
+			for (String name:otherComp){
+				Library lib=man.getLibrary(name);
+				if (lib!=null) {
+					foundDeps.add(name + found);
+				} else {
+					File f=new File(rootDir.getAbsoluteFile() + File.separator
+						+ name);
+					if (f.exists()){
+						FileObject projRef=FileUtil.toFileObject(f);
+						Project prj=proMan.findProject(projRef);
+						if (prj!=null) {
+							foundDeps.add(name + found);
+						}
+					}
+				}
+			}
+			jList1.setListData((String[])foundDeps.toArray(new String[0]));
 		} catch (IOException|SAXException|XPathExpressionException ex) {
 //			Exceptions.printStackTrace(ex);
 		}

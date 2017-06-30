@@ -191,26 +191,26 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
     }//GEN-LAST:event_browseButtonActionPerformed
 
     private void browseComponentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseComponentButtonActionPerformed
-        String command = evt.getActionCommand();
-        if ("BROWSE".equals(command)) {//NOI18N
-            JFileChooser chooser = new JFileChooser();
-            FileUtil.preventFileChooserSymlinkTraversal(chooser, null);
-            chooser.setDialogTitle(NbBundle.getMessage(
-                PanelConfigureProjectVisual.class, "title.SelCompLoc"));//NOI18N
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        String path = this.componentFolder.getText();
-        if (path.length() > 0) {
-            File f = new File(path);
-            if (f.exists()) {
-                chooser.setSelectedFile(f);
-            }
-        }
-        if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog(this)) {
-            File projectDir = chooser.getSelectedFile();
-            componentFolder.setText(FileUtil.normalizeFile(projectDir).getAbsolutePath());
-        }
-        panel.fireChangeEvent();
-        }
+		String command = evt.getActionCommand();
+		if ("BROWSE".equals(command)) {//NOI18N
+			JFileChooser chooser = new JFileChooser();
+			FileUtil.preventFileChooserSymlinkTraversal(chooser, null);
+			chooser.setDialogTitle(NbBundle.getMessage(
+				PanelConfigureProjectVisual.class, "title.SelCompLoc"));//NOI18N
+			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			String path = this.componentFolder.getText();
+			if (path.length() > 0) {
+				File f = new File(path);
+				if (f.exists()) {
+					chooser.setSelectedFile(f);
+				}
+			}
+			if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog(this)) {
+				File projectDir = chooser.getSelectedFile();
+				componentFolder.setText(FileUtil.normalizeFile(projectDir).getAbsolutePath());
+			}
+			panel.fireChangeEvent();
+		}
     }//GEN-LAST:event_browseComponentButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
