@@ -42,6 +42,7 @@ public class ComponentDefinition {
 	public static String SRCROT="sourceRoot";		//NOI18N
 	public static String TSTROT="testRoot";			//NOI18N
 	public static String BLDJAR="buildJAR";			//NOI18N
+	public static String PRJDEP="projdep";			//NOI18N
 
 	private String compDirStr;
 	private File compDirF;
