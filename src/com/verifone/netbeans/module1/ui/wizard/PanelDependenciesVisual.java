@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultListModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.xml.xpath.XPathExpressionException;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectManager;
@@ -31,6 +33,7 @@ import org.openide.WizardValidationException;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.xml.sax.SAXException;
+import org.netbeans.modules.java.api.common.project.ui.customizer.ClassPathListCellRenderer;
 
 /**
  *
@@ -47,6 +50,10 @@ public class PanelDependenciesVisual extends SettingsPanel {
 	public PanelDependenciesVisual(PanelDependencies panel) {
 		this.panel=panel;
 		initComponents();
+		//Fix this ☠
+		TableCellRenderer renderer = ClassPathListCellRenderer
+				.createClassPathTableRenderer(evaluator, projectFolder);
+		jTable1.setDefaultRenderer(columnClass, renderer);
 	}
 
 	@Override
@@ -126,7 +133,20 @@ public class PanelDependenciesVisual extends SettingsPanel {
 	@Override
 	void read(WizardDescriptor settings) {
 		depen = (Map) settings.getProperty(ComponentDefinition.PRJDEP);
-		if (depen == null)
+		DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
+
+		//Clean the table ☠ ☢ 😵
+		while (model.getRowCount() > 0) model.removeRow(0);
+
+		//If dependency property already exists 😊
+		if (depen != null){
+			for (String compDep:depen.keySet()) {
+				String depRef=depen.get(compDep);
+				model.addRow(new Object[]{depRef, compDep});
+			}
+			return;
+		}
+
 		panelCompDef = (ComponentDefinition) settings.getProperty(ComponentDefinition.CMPDIR);
 		File prjDir = (File) settings.getProperty(ComponentDefinition.PRJDIR);
 		try {
@@ -139,20 +159,24 @@ public class PanelDependenciesVisual extends SettingsPanel {
 			for (String name:otherComp){
 				Library lib=man.getLibrary(name);
 				if (lib!=null) {
-					foundDeps.add(name + found);
-				} else {
-					File f=new File(rootDir.getAbsoluteFile() + File.separator
-						+ name);
-					if (f.exists()){
-						FileObject projRef=FileUtil.toFileObject(f);
-						Project prj=proMan.findProject(projRef);
-						if (prj!=null) {
-							foundDeps.add(name + found);
-						}
+					model.addRow(new Object[]{name, "Library found"});
+					continue;
+//					foundDeps.add(name + found);
+				}
+				File f=new File(rootDir.getAbsoluteFile() + File.separator
+					+ name);
+				if (f.exists()){
+					FileObject projRef=FileUtil.toFileObject(f);
+					Project prj=proMan.findProject(projRef);
+					if (prj!=null) {
+						model.addRow(new Object[]{name, f.getAbsolutePath()});
+						continue;
+//							foundDeps.add(name + found);
 					}
 				}
+				model.addRow(new Object[]{name, ""});
 			}
-			jTable1.set
+			
 //			jList1.setListData((String[])foundDeps.toArray(new String[0]));
 		} catch (IOException|SAXException|XPathExpressionException ex) {
 //			Exceptions.printStackTrace(ex);
