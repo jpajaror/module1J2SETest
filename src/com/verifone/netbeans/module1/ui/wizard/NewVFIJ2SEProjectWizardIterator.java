@@ -22,13 +22,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
 import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.api.project.libraries.Library;
 import org.netbeans.api.templates.TemplateRegistration;
+import org.netbeans.modules.java.api.common.classpath.ClassPathSupport;
 import org.netbeans.modules.java.api.common.project.ProjectProperties;
 import org.netbeans.modules.java.j2seproject.api.J2SEProjectBuilder;
 import org.netbeans.modules.java.j2seproject.ui.customizer.J2SEProjectProperties;
@@ -194,7 +197,7 @@ public final class NewVFIJ2SEProjectWizardIterator
 		}
 		dirF = FileUtil.normalizeFile(dirF);
 		String name = (String)myWiz.getProperty(ComponentDefinition.NAME);
-		String librariesDefinition = (String)myWiz.getProperty("sharedLibraries");
+//		String librariesDefinition = (String)myWiz.getProperty("sharedLibraries");
 //		String librariesDefinition = (String)myWiz.getProperty(PanelOptionsVisual.SHARED_LIBRARIES);
 //		if (librariesDefinition != null) {
 //			if (!librariesDefinition.endsWith(File.separator)) {
@@ -209,9 +212,22 @@ public final class NewVFIJ2SEProjectWizardIterator
 		File[] sourceFolders = (File[])myWiz.getProperty(ComponentDefinition.SRCROT);
 		File[] testFolders = (File[])myWiz.getProperty(ComponentDefinition.TSTROT);
 		String distFolder = (String) myWiz.getProperty(PROP_DIST_FOLDER);
+		Map<String, ClassPathSupport.Item> depen = (Map) myWiz.getProperty(ComponentDefinition.PRJDEP);
+		List<Library> libs = new ArrayList<>();
+		
+		if (depen != null) depen.keySet().forEach((compDep) -> {
+			ClassPathSupport.Item item=depen.get(compDep);
+			switch(item.getType()){
+				case ClassPathSupport.Item.TYPE_LIBRARY:
+					libs.add(item.getLibrary());
+					break;
+				default:
+					break;
+			}
+		});
 
 		AntProjectHelper h = createProject(dirF, name, sourceFolders,
-				testFolders, distFolder);
+				testFolders, distFolder, libs.toArray(new Library[0]));
 
 		handle.progress(NbBundle.getMessage (NewVFIJ2SEProjectWizardIterator.class,
 				"LBL.NewJ2SEProjectWizardIterator_WizardProgress_SettingProps"),2);
@@ -227,7 +243,11 @@ public final class NewVFIJ2SEProjectWizardIterator
 		});
 		ep.setProperty("javac.test.classpath", new String[] { // NOI18N
 			ref(ProjectProperties.BUILD_CLASSES_DIR, false),
-			ref(ProjectProperties.JAVAC_CLASSPATH, true)
+			ref(ProjectProperties.JAVAC_CLASSPATH, false),
+			ref("libs.isdMWare.java.apis.apache.junit.classpath", false),// NOI18N
+			ref("libs.hamcrest.classpath", true)// NOI18N
+//			ref("libs.junit.classpath", false), // NOI18N
+//			ref("libs.junit_4.classpath", true)  //NOI18N
 		});
 		h.putProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH, ep);
 
@@ -267,16 +287,17 @@ public final class NewVFIJ2SEProjectWizardIterator
 	}
 
 	private AntProjectHelper createProject(File dirF, String name, File[] sourceFolders,
-			File[] testFolders, String distFolder) throws IOException{
+			File[] testFolders, String distFolder, Library... libs) throws IOException{
 //		String buildScriptName = (String) myWiz.getProperty(PROP_BUILD_SCRIPT_NAME);
 //		String distFolder = (String) myWiz.getProperty(PROP_DIST_FOLDER);
 //		Boolean buildJar = (Boolean) myWiz.getProperty(ComponentDefinition.BLDJAR);
 		return new J2SEProjectBuilder(dirF, name)
 //			.addDefaultSourceRoots()
+			.skipTests(true)// Always true since we are overriding the test classpath, it was (testFolders.length == 0)
 			.addSourceRoots(sourceFolders)
 			.addTestRoots(testFolders)
-			.skipTests(testFolders.length != 0)
 			.setManifest(MANIFEST_FILE)
+			.addCompileLibraries(libs)
 //			.setLibrariesDefinitionFile(librariesDefinition)
 //			.setBuildXmlName(buildScriptName)
 			.setDistFolder(distFolder)

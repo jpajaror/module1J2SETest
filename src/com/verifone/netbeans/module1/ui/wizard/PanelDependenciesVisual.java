@@ -18,6 +18,7 @@ import com.verifone.netbeans.module1.component.ComponentDefinition;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultListModel;
@@ -33,6 +34,7 @@ import org.openide.WizardValidationException;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.xml.sax.SAXException;
+import org.netbeans.modules.java.api.common.classpath.ClassPathSupport;
 import org.netbeans.modules.java.api.common.project.ui.customizer.ClassPathListCellRenderer;
 import org.netbeans.modules.java.j2seproject.ui.customizer.J2SEProjectProperties;
 
@@ -44,7 +46,7 @@ public class PanelDependenciesVisual extends SettingsPanel {
 
 	private ComponentDefinition panelCompDef;
 	private PanelDependencies panel;
-	private Map<String, String> depen;
+	private Map<String, ClassPathSupport.Item> depen;
 	/**
 	 * Creates new form PanelDependencies
 	 */
@@ -129,11 +131,12 @@ public class PanelDependenciesVisual extends SettingsPanel {
 
 	@Override
 	void store(WizardDescriptor settings) {
-//		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		settings.putProperty(ComponentDefinition.PRJDEP, depen);
 	}
 
 	@Override
 	void read(WizardDescriptor settings) {
+		//Restart the wizard property if the component changes 😱 😵.
 		depen = (Map) settings.getProperty(ComponentDefinition.PRJDEP);
 		DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
 
@@ -143,17 +146,24 @@ public class PanelDependenciesVisual extends SettingsPanel {
 		//If dependency property already exists 😊.
 		if (depen != null){
 			for (String compDep:depen.keySet()) {
-				String depRef=depen.get(compDep);
-				model.addRow(new Object[]{depRef, compDep});
+//				String depRef=depen.get(compDep);
+//				model.addRow(new Object[]{depRef, compDep});
+//
+//				ClassPathSupport.Item item = depen.get(compDep);
+//				
+//				model.addRow(new Object[]{
+//					(item.getType()==ClassPathSupport.Item.TYPE_LIBRARY)? "":"",
+//					compDep});
 			}
 			return;
 		}
 
 		panelCompDef = (ComponentDefinition) settings.getProperty(ComponentDefinition.CMPDIR);
 		File prjDir = (File) settings.getProperty(ComponentDefinition.PRJDIR);
+		depen = new HashMap<>();
 		try {
 			List<String> otherComp=panelCompDef.readComponentDef();
-			List<String> foundDeps=new ArrayList<>();
+//			List<String> foundDeps=new ArrayList<>();
 			LibraryManager man = LibraryManager.getDefault();
 			ProjectManager proMan=ProjectManager.getDefault();
 			File rootDir=prjDir.getParentFile();
@@ -162,6 +172,7 @@ public class PanelDependenciesVisual extends SettingsPanel {
 				Library lib=man.getLibrary(name);
 				if (lib!=null) {
 					model.addRow(new Object[]{name, "Library found"});
+					depen.put(name, ClassPathSupport.Item.create(lib, null));
 					continue;
 //					foundDeps.add(name + found);
 				}
@@ -172,6 +183,7 @@ public class PanelDependenciesVisual extends SettingsPanel {
 					Project prj=proMan.findProject(projRef);
 					if (prj!=null) {
 						model.addRow(new Object[]{name, f.getAbsolutePath()});
+						depen.put(name, ClassPathSupport.Item.create(f.getName(), f, null, null));
 						continue;
 //							foundDeps.add(name + found);
 					}
