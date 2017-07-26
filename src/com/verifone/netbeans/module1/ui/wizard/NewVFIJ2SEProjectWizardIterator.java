@@ -29,6 +29,7 @@ import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
 import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.api.project.Project;
 import org.netbeans.api.project.libraries.Library;
 import org.netbeans.api.templates.TemplateRegistration;
 import org.netbeans.modules.java.api.common.classpath.ClassPathSupport;
@@ -214,12 +215,16 @@ public final class NewVFIJ2SEProjectWizardIterator
 		String distFolder = (String) myWiz.getProperty(PROP_DIST_FOLDER);
 		Map<String, ClassPathSupport.Item> depen = (Map) myWiz.getProperty(ComponentDefinition.PRJDEP);
 		List<Library> libs = new ArrayList<>();
+		List<Project> prjs = new ArrayList<>();
 		
 		if (depen != null) depen.keySet().forEach((compDep) -> {
 			ClassPathSupport.Item item=depen.get(compDep);
 			switch(item.getType()){
 				case ClassPathSupport.Item.TYPE_LIBRARY:
 					libs.add(item.getLibrary());
+					break;
+				case ClassPathSupport.Item.TYPE_JAR:
+					prjs.add(item.)
 					break;
 				default:
 					break;
@@ -246,8 +251,6 @@ public final class NewVFIJ2SEProjectWizardIterator
 			ref(ProjectProperties.JAVAC_CLASSPATH, false),
 			ref("libs.isdMWare.java.apis.apache.junit.classpath", false),// NOI18N
 			ref("libs.hamcrest.classpath", true)// NOI18N
-//			ref("libs.junit.classpath", false), // NOI18N
-//			ref("libs.junit_4.classpath", true)  //NOI18N
 		});
 		h.putProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH, ep);
 
