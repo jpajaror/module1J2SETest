@@ -34,6 +34,7 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.xml.sax.SAXException;
 import org.netbeans.modules.java.api.common.project.ui.customizer.ClassPathListCellRenderer;
+import org.netbeans.modules.java.j2seproject.ui.customizer.J2SEProjectProperties;
 
 /**
  *
@@ -51,9 +52,10 @@ public class PanelDependenciesVisual extends SettingsPanel {
 		this.panel=panel;
 		initComponents();
 		//Fix this ☠
-		TableCellRenderer renderer = ClassPathListCellRenderer
-				.createClassPathTableRenderer(evaluator, projectFolder);
-		jTable1.setDefaultRenderer(columnClass, renderer);
+//		ProjectManager.getDefault()
+//		TableCellRenderer renderer = ClassPathListCellRenderer
+//				.createClassPathTableRenderer(evaluator, projectFolder);
+//		jTable1.setDefaultRenderer(columnClass, renderer);
 	}
 
 	@Override
@@ -138,7 +140,7 @@ public class PanelDependenciesVisual extends SettingsPanel {
 		//Clean the table ☠ ☢ 😵
 		while (model.getRowCount() > 0) model.removeRow(0);
 
-		//If dependency property already exists 😊
+		//If dependency property already exists 😊.
 		if (depen != null){
 			for (String compDep:depen.keySet()) {
 				String depRef=depen.get(compDep);
