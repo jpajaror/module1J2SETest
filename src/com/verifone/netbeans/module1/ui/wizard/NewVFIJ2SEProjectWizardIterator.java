@@ -18,6 +18,7 @@ import com.verifone.netbeans.module1.component.ComponentDefinition;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -28,22 +29,31 @@ import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
 import org.netbeans.api.annotations.common.NonNull;
+import org.netbeans.api.java.classpath.ClassPath;
+import org.netbeans.api.java.project.classpath.ProjectClassPathModifier;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.project.Project;
+import org.netbeans.api.project.ProjectManager;
+import org.netbeans.api.project.ant.AntArtifact;
 import org.netbeans.api.project.libraries.Library;
 import org.netbeans.api.templates.TemplateRegistration;
 import org.netbeans.modules.java.api.common.classpath.ClassPathSupport;
 import org.netbeans.modules.java.api.common.project.ProjectProperties;
+import org.netbeans.modules.java.j2seproject.J2SEProject;
 import org.netbeans.modules.java.j2seproject.api.J2SEProjectBuilder;
 import org.netbeans.modules.java.j2seproject.ui.customizer.J2SEProjectProperties;
 import org.netbeans.spi.java.project.support.ui.SharableLibrariesUtils;
+import org.netbeans.spi.project.ant.AntArtifactProvider;
 import org.netbeans.spi.project.support.ant.AntProjectHelper;
 import org.netbeans.spi.project.support.ant.EditableProperties;
 import org.netbeans.spi.project.ui.support.ProjectChooser;
 import org.openide.WizardDescriptor;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
+import org.openide.util.Utilities;
 
 @TemplateRegistration(folder = "Project/VF",
 //					  position=10,
@@ -198,14 +208,6 @@ public final class NewVFIJ2SEProjectWizardIterator
 		}
 		dirF = FileUtil.normalizeFile(dirF);
 		String name = (String)myWiz.getProperty(ComponentDefinition.NAME);
-//		String librariesDefinition = (String)myWiz.getProperty("sharedLibraries");
-//		String librariesDefinition = (String)myWiz.getProperty(PanelOptionsVisual.SHARED_LIBRARIES);
-//		if (librariesDefinition != null) {
-//			if (!librariesDefinition.endsWith(File.separator)) {
-//				librariesDefinition += File.separatorChar;
-//			}
-//			librariesDefinition += SharableLibrariesUtils.DEFAULT_LIBRARIES_FILENAME;
-//		}
 		handle.progress(NbBundle.getMessage (NewVFIJ2SEProjectWizardIterator.class,
 				"LBL.NewJ2SEProjectWizardIterator_WizardProgress_CreatingProject"), 1);
 
@@ -216,15 +218,23 @@ public final class NewVFIJ2SEProjectWizardIterator
 		Map<String, ClassPathSupport.Item> depen = (Map) myWiz.getProperty(ComponentDefinition.PRJDEP);
 		List<Library> libs = new ArrayList<>();
 		List<Project> prjs = new ArrayList<>();
-		
+//		List<ClassPathSupport.Item> prjs = new ArrayList<>();
+
+		ProjectManager proMan=ProjectManager.getDefault();
 		if (depen != null) depen.keySet().forEach((compDep) -> {
 			ClassPathSupport.Item item=depen.get(compDep);
-			switch(item.getType()){
+			switch(item.getType()) {
 				case ClassPathSupport.Item.TYPE_LIBRARY:
 					libs.add(item.getLibrary());
 					break;
 				case ClassPathSupport.Item.TYPE_JAR:
-					prjs.add(item.)
+//					prjs.add(item);
+					FileObject projRef=FileUtil.toFileObject(item.getResolvedFile());
+					try {
+						prjs.add(proMan.findProject(projRef));
+					} catch (IOException|IllegalArgumentException ex) {
+						Exceptions.printStackTrace(ex);
+					}
 					break;
 				default:
 					break;
@@ -237,22 +247,9 @@ public final class NewVFIJ2SEProjectWizardIterator
 		handle.progress(NbBundle.getMessage (NewVFIJ2SEProjectWizardIterator.class,
 				"LBL.NewJ2SEProjectWizardIterator_WizardProgress_SettingProps"),2);
 
+		
 		writeProperties(h, myWiz);
 		writePrivateProperties(h, myWiz);
-
-		EditableProperties ep = h.getProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH);
-		//classpath
-		ep.setProperty("run.test.classpath", new String[] { // NOI18N
-			ref(ProjectProperties.BUILD_TEST_CLASSES_DIR, false),
-			ref(ProjectProperties.JAVAC_TEST_CLASSPATH, true)
-		});
-		ep.setProperty("javac.test.classpath", new String[] { // NOI18N
-			ref(ProjectProperties.BUILD_CLASSES_DIR, false),
-			ref(ProjectProperties.JAVAC_CLASSPATH, false),
-			ref("libs.isdMWare.java.apis.apache.junit.classpath", false),// NOI18N
-			ref("libs.hamcrest.classpath", true)// NOI18N
-		});
-		h.putProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH, ep);
 
 		handle.progress (3);
 		for (File f : sourceFolders) {
@@ -261,6 +258,61 @@ public final class NewVFIJ2SEProjectWizardIterator
 				resultSet.add (srcFo);
 			}
 		}
+
+		EditableProperties ep = h.getProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH);
+		ep.setProperty("run.test.classpath", new String[] { // NOI18N
+			ref(ProjectProperties.BUILD_TEST_CLASSES_DIR, false),
+			ref(ProjectProperties.JAVAC_TEST_CLASSPATH, true)
+		});
+		
+		ep.setProperty("javac.test.classpath", new String[] { // NOI18N
+			ref(ProjectProperties.BUILD_CLASSES_DIR, false),
+			ref(ProjectProperties.JAVAC_CLASSPATH, false),
+			ref("libs.isdMWare.java.apis.apache.junit.classpath", false),// NOI18N
+			ref("libs.hamcrest.classpath", true)// NOI18N
+		});
+
+//		for (ClassPathSupport.Item item:prjs){
+//		prjs.forEach((item) -> {
+//			File file = item.getResolvedFile();
+//			if (file != null && file.isDirectory()){
+//				for (File f:file.listFiles()){
+//					
+//				}
+//			}
+//			if (item != null) {
+//				ProjectClassPathModifier.addProjects(projects, h., classpath)
+//				item.initSourceAndJavadoc(h);
+//				item.updateJarReference(h);
+//			}
+//		});
+//		}
+
+		h.putProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH, ep);
+
+		//classpath
+		J2SEProject compProj = (J2SEProject) proMan.findProject(h.getProjectDirectory());
+		Lookup lookup = compProj.getLookup();
+		AntArtifact[] aas = lookup.lookup(AntArtifactProvider.class).getBuildArtifacts();
+		URI uri = aas[0].getArtifactLocations()[0].resolve(h.getProjectDirectory().toURI());
+		File f=Utilities.toFile(uri);
+		ProjectClassPathModifier.addProjects(prjs.toArray(new Project[0]), 
+				FileUtil.toFileObject(f), ClassPath.COMPILE);
+//		for (ClassPathSupport.Item item:prjs){
+//		prjs.forEach((item) -> {
+//			File file = item.getResolvedFile();
+//			if (file != null && file.isDirectory()){
+//				for (File f:file.listFiles()){
+//					
+//				}
+//			}
+//			if (item != null) {
+//				ProjectClassPathModifier.addProjects(projects, h., classpath)
+//				item.initSourceAndJavadoc(h);
+//				item.updateJarReference(h);
+//			}
+//		});
+//		}
 
 		handle.progress (NbBundle.getMessage (NewVFIJ2SEProjectWizardIterator.class,
 				"LBL.NewJ2SEProjectWizardIterator_WizardProgress_PreparingToOpen"), 4);
@@ -301,7 +353,7 @@ public final class NewVFIJ2SEProjectWizardIterator
 			.addTestRoots(testFolders)
 			.setManifest(MANIFEST_FILE)
 			.addCompileLibraries(libs)
-//			.setLibrariesDefinitionFile(librariesDefinition)
+//			.setLibrariesDefinitionFile("." + File.separator + "lib" + File.separator) //NOI18N
 //			.setBuildXmlName(buildScriptName)
 			.setDistFolder(distFolder)
 			.build();

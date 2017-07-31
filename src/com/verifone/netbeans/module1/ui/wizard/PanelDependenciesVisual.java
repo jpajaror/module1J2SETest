@@ -17,6 +17,7 @@ package com.verifone.netbeans.module1.ui.wizard;
 import com.verifone.netbeans.module1.component.ComponentDefinition;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -183,7 +184,7 @@ public class PanelDependenciesVisual extends SettingsPanel {
 					Project prj=proMan.findProject(projRef);
 					if (prj!=null) {
 						model.addRow(new Object[]{name, f.getAbsolutePath()});
-						depen.put(name, ClassPathSupport.Item.create(f.getName(), f, null, null));
+						depen.put(name, ClassPathSupport.Item.create(f.getAbsolutePath(), prjDir, name, null));
 						continue;
 //							foundDeps.add(name + found);
 					}
