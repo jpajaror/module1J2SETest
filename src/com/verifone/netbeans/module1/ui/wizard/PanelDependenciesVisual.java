@@ -28,6 +28,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.xml.xpath.XPathExpressionException;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectManager;
+import org.netbeans.api.project.ant.AntArtifact;
 import org.netbeans.api.project.libraries.Library;
 import org.netbeans.api.project.libraries.LibraryManager;
 import org.openide.WizardDescriptor;
@@ -37,7 +38,9 @@ import org.openide.filesystems.FileUtil;
 import org.xml.sax.SAXException;
 import org.netbeans.modules.java.api.common.classpath.ClassPathSupport;
 import org.netbeans.modules.java.api.common.project.ui.customizer.ClassPathListCellRenderer;
+import org.netbeans.modules.java.j2seproject.J2SEProject;
 import org.netbeans.modules.java.j2seproject.ui.customizer.J2SEProjectProperties;
+import org.netbeans.spi.project.ant.AntArtifactProvider;
 
 /**
  *
@@ -164,18 +167,15 @@ public class PanelDependenciesVisual extends SettingsPanel {
 		depen = new HashMap<>();
 		try {
 			List<String> otherComp=panelCompDef.readComponentDef();
-//			List<String> foundDeps=new ArrayList<>();
 			LibraryManager man = LibraryManager.getDefault();
 			ProjectManager proMan=ProjectManager.getDefault();
 			File rootDir=prjDir.getParentFile();
-//			String found = " (found)";
 			for (String name:otherComp){
 				Library lib=man.getLibrary(name);
 				if (lib!=null) {
 					model.addRow(new Object[]{name, "Library found"});
 					depen.put(name, ClassPathSupport.Item.create(lib, null));
 					continue;
-//					foundDeps.add(name + found);
 				}
 				File f=new File(rootDir.getAbsoluteFile() + File.separator
 					+ name);
@@ -184,9 +184,9 @@ public class PanelDependenciesVisual extends SettingsPanel {
 					Project prj=proMan.findProject(projRef);
 					if (prj!=null) {
 						model.addRow(new Object[]{name, f.getAbsolutePath()});
-						depen.put(name, ClassPathSupport.Item.create(f.getAbsolutePath(), prjDir, name, null));
+						AntArtifact aa=((J2SEProject)prj).getLookup().lookup(AntArtifactProvider.class).getBuildArtifacts()[0];
+						depen.put(name, ClassPathSupport.Item.create(aa, aa.getArtifactLocations()[0], name));
 						continue;
-//							foundDeps.add(name + found);
 					}
 				}
 				model.addRow(new Object[]{name, ""});

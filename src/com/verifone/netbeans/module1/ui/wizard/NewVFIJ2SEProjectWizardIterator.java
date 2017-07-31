@@ -19,6 +19,7 @@ import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -46,6 +47,7 @@ import org.netbeans.spi.java.project.support.ui.SharableLibrariesUtils;
 import org.netbeans.spi.project.ant.AntArtifactProvider;
 import org.netbeans.spi.project.support.ant.AntProjectHelper;
 import org.netbeans.spi.project.support.ant.EditableProperties;
+import org.netbeans.spi.project.support.ant.ReferenceHelper;
 import org.netbeans.spi.project.ui.support.ProjectChooser;
 import org.openide.WizardDescriptor;
 import org.openide.filesystems.FileObject;
@@ -217,8 +219,7 @@ public final class NewVFIJ2SEProjectWizardIterator
 		String distFolder = (String) myWiz.getProperty(PROP_DIST_FOLDER);
 		Map<String, ClassPathSupport.Item> depen = (Map) myWiz.getProperty(ComponentDefinition.PRJDEP);
 		List<Library> libs = new ArrayList<>();
-		List<Project> prjs = new ArrayList<>();
-//		List<ClassPathSupport.Item> prjs = new ArrayList<>();
+		List<ClassPathSupport.Item> prjs = new ArrayList<>();
 
 		ProjectManager proMan=ProjectManager.getDefault();
 		if (depen != null) depen.keySet().forEach((compDep) -> {
@@ -227,14 +228,8 @@ public final class NewVFIJ2SEProjectWizardIterator
 				case ClassPathSupport.Item.TYPE_LIBRARY:
 					libs.add(item.getLibrary());
 					break;
-				case ClassPathSupport.Item.TYPE_JAR:
-//					prjs.add(item);
-					FileObject projRef=FileUtil.toFileObject(item.getResolvedFile());
-					try {
-						prjs.add(proMan.findProject(projRef));
-					} catch (IOException|IllegalArgumentException ex) {
-						Exceptions.printStackTrace(ex);
-					}
+				case ClassPathSupport.Item.TYPE_ARTIFACT:
+					prjs.add(item);
 					break;
 				default:
 					break;
@@ -247,7 +242,19 @@ public final class NewVFIJ2SEProjectWizardIterator
 		handle.progress(NbBundle.getMessage (NewVFIJ2SEProjectWizardIterator.class,
 				"LBL.NewJ2SEProjectWizardIterator_WizardProgress_SettingProps"),2);
 
-		
+		//classpath
+		List<String> refs = new ArrayList<>();
+		J2SEProject compProj = (J2SEProject) proMan.findProject(h.getProjectDirectory());
+		for (ClassPathSupport.Item item:prjs){
+			if (item != null) {
+				ReferenceHelper rh = compProj.getReferenceHelper();
+				String refStr = rh.addReference(item.getArtifact(), item.getArtifactURI());
+				if (refStr!=null){
+					refs.add(refStr + ":");
+				}
+			}
+		}
+
 		writeProperties(h, myWiz);
 		writePrivateProperties(h, myWiz);
 
@@ -272,47 +279,17 @@ public final class NewVFIJ2SEProjectWizardIterator
 			ref("libs.hamcrest.classpath", true)// NOI18N
 		});
 
-//		for (ClassPathSupport.Item item:prjs){
-//		prjs.forEach((item) -> {
-//			File file = item.getResolvedFile();
-//			if (file != null && file.isDirectory()){
-//				for (File f:file.listFiles()){
-//					
-//				}
-//			}
-//			if (item != null) {
-//				ProjectClassPathModifier.addProjects(projects, h., classpath)
-//				item.initSourceAndJavadoc(h);
-//				item.updateJarReference(h);
-//			}
-//		});
-//		}
+		String oldJavaCp=ep.getProperty(ProjectProperties.JAVAC_CLASSPATH);
+		if (oldJavaCp == null || oldJavaCp.isEmpty()) {
+			String t=refs.remove(refs.size() - 1);
+			t=t.substring(0,t.length()-1);
+			refs.add(t);
+		} else {
+			refs.add(oldJavaCp);
+		}
+		ep.setProperty(ProjectProperties.JAVAC_CLASSPATH, refs.toArray(new String[0]));
 
 		h.putProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH, ep);
-
-		//classpath
-		J2SEProject compProj = (J2SEProject) proMan.findProject(h.getProjectDirectory());
-		Lookup lookup = compProj.getLookup();
-		AntArtifact[] aas = lookup.lookup(AntArtifactProvider.class).getBuildArtifacts();
-		URI uri = aas[0].getArtifactLocations()[0].resolve(h.getProjectDirectory().toURI());
-		File f=Utilities.toFile(uri);
-		ProjectClassPathModifier.addProjects(prjs.toArray(new Project[0]), 
-				FileUtil.toFileObject(f), ClassPath.COMPILE);
-//		for (ClassPathSupport.Item item:prjs){
-//		prjs.forEach((item) -> {
-//			File file = item.getResolvedFile();
-//			if (file != null && file.isDirectory()){
-//				for (File f:file.listFiles()){
-//					
-//				}
-//			}
-//			if (item != null) {
-//				ProjectClassPathModifier.addProjects(projects, h., classpath)
-//				item.initSourceAndJavadoc(h);
-//				item.updateJarReference(h);
-//			}
-//		});
-//		}
 
 		handle.progress (NbBundle.getMessage (NewVFIJ2SEProjectWizardIterator.class,
 				"LBL.NewJ2SEProjectWizardIterator_WizardProgress_PreparingToOpen"), 4);
