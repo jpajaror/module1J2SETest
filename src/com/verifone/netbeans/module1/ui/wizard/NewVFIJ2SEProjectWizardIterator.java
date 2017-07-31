@@ -18,8 +18,6 @@ import com.verifone.netbeans.module1.component.ComponentDefinition;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,12 +28,8 @@ import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
 import org.netbeans.api.annotations.common.NonNull;
-import org.netbeans.api.java.classpath.ClassPath;
-import org.netbeans.api.java.project.classpath.ProjectClassPathModifier;
 import org.netbeans.api.progress.ProgressHandle;
-import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectManager;
-import org.netbeans.api.project.ant.AntArtifact;
 import org.netbeans.api.project.libraries.Library;
 import org.netbeans.api.templates.TemplateRegistration;
 import org.netbeans.modules.java.api.common.classpath.ClassPathSupport;
@@ -44,7 +38,6 @@ import org.netbeans.modules.java.j2seproject.J2SEProject;
 import org.netbeans.modules.java.j2seproject.api.J2SEProjectBuilder;
 import org.netbeans.modules.java.j2seproject.ui.customizer.J2SEProjectProperties;
 import org.netbeans.spi.java.project.support.ui.SharableLibrariesUtils;
-import org.netbeans.spi.project.ant.AntArtifactProvider;
 import org.netbeans.spi.project.support.ant.AntProjectHelper;
 import org.netbeans.spi.project.support.ant.EditableProperties;
 import org.netbeans.spi.project.support.ant.ReferenceHelper;
@@ -52,10 +45,7 @@ import org.netbeans.spi.project.ui.support.ProjectChooser;
 import org.openide.WizardDescriptor;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
-import org.openide.util.Exceptions;
-import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
-import org.openide.util.Utilities;
 
 @TemplateRegistration(folder = "Project/VF",
 //					  position=10,
@@ -88,7 +78,6 @@ public final class NewVFIJ2SEProjectWizardIterator
 	private List<WizardDescriptor.Panel<WizardDescriptor>> panels;
 	private transient volatile WizardDescriptor wiz;
 
-//	static final String PROP_BUILD_SCRIPT_NAME = "buildScriptName";		//NOI18N
 	static final String PROP_DIST_FOLDER = "distFolder";				//NOI18N
 	private static final String MANIFEST_FILE = "manifest.mf";			// NOI18N
 
@@ -281,8 +270,8 @@ public final class NewVFIJ2SEProjectWizardIterator
 
 		String oldJavaCp=ep.getProperty(ProjectProperties.JAVAC_CLASSPATH);
 		if (oldJavaCp == null || oldJavaCp.isEmpty()) {
-			String t=refs.remove(refs.size() - 1);
-			t=t.substring(0,t.length()-1);
+			String t = refs.remove(refs.size() - 1);
+			t = t.substring(0, t.length() - 1);
 			refs.add(t);
 		} else {
 			refs.add(oldJavaCp);
@@ -320,18 +309,12 @@ public final class NewVFIJ2SEProjectWizardIterator
 
 	private AntProjectHelper createProject(File dirF, String name, File[] sourceFolders,
 			File[] testFolders, String distFolder, Library... libs) throws IOException{
-//		String buildScriptName = (String) myWiz.getProperty(PROP_BUILD_SCRIPT_NAME);
-//		String distFolder = (String) myWiz.getProperty(PROP_DIST_FOLDER);
-//		Boolean buildJar = (Boolean) myWiz.getProperty(ComponentDefinition.BLDJAR);
 		return new J2SEProjectBuilder(dirF, name)
-//			.addDefaultSourceRoots()
-			.skipTests(true)// Always true since we are overriding the test classpath, it was (testFolders.length == 0)
+			.skipTests(true)
 			.addSourceRoots(sourceFolders)
 			.addTestRoots(testFolders)
 			.setManifest(MANIFEST_FILE)
 			.addCompileLibraries(libs)
-//			.setLibrariesDefinitionFile("." + File.separator + "lib" + File.separator) //NOI18N
-//			.setBuildXmlName(buildScriptName)
 			.setDistFolder(distFolder)
 			.build();
 	}
