@@ -186,6 +186,7 @@ public final class NewVFIJ2SEProjectWizardIterator
 
 	@Override
 	public Set<FileObject> instantiate(ProgressHandle handle) throws IOException {
+		//LibraryManager man = LibraryManager.forLocation(URL);
 		final WizardDescriptor myWiz = this.wiz;
 		if (myWiz == null) {
 			return Collections.emptySet();
