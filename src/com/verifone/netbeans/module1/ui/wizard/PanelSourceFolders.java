@@ -20,8 +20,7 @@ import org.openide.WizardValidationException;
 import org.openide.util.ChangeSupport;
 import org.openide.util.HelpCtx;
 
-public class PanelSourceFolders implements WizardDescriptor.AsynchronousValidatingPanel,
-		WizardDescriptor.FinishablePanel {
+public class PanelSourceFolders implements WizardDescriptor.ValidatingPanel {
 
 	private final ChangeSupport changeSupport = new ChangeSupport(this);
 	private WizardDescriptor descriptor;
@@ -72,11 +71,6 @@ public class PanelSourceFolders implements WizardDescriptor.AsynchronousValidati
 	}
 
 	@Override
-	public void prepareValidation() {
-		this.component.prepareValidation();
-	}
-
-	@Override
 	public void validate() throws WizardValidationException {
 		this.component.validate(this.descriptor);
 	}
@@ -90,11 +84,6 @@ public class PanelSourceFolders implements WizardDescriptor.AsynchronousValidati
 	@Override
 	public void storeSettings(Object settings) {
 		this.component.store(this.descriptor);
-	}
-
-	@Override
-	public boolean isFinishPanel() {
-		return true;
 	}
 
 	protected final void fireChangeEvent() {

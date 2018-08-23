@@ -258,14 +258,14 @@ public final class NewVFIJ2SEProjectWizardIterator
 		EditableProperties ep = h.getProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH);
 		ep.setProperty("run.test.classpath", new String[] { // NOI18N
 			ref(ProjectProperties.BUILD_TEST_CLASSES_DIR, false),
-			ref(ProjectProperties.JAVAC_TEST_CLASSPATH, true)
+			ref(ProjectProperties.JAVAC_TEST_CLASSPATH, false),
+			ref("libs.isdSys.mw.java.apis.apache.log4j.classpath", true),// NOI18N
 		});
 		
 		ep.setProperty("javac.test.classpath", new String[] { // NOI18N
 			ref(ProjectProperties.BUILD_CLASSES_DIR, false),
 			ref(ProjectProperties.JAVAC_CLASSPATH, false),
-			ref("libs.isdMWare.java.apis.apache.junit.classpath", false),// NOI18N
-			ref("libs.hamcrest.classpath", true)// NOI18N
+			ref("libs.isdMWare.buildTools.junit.classpath", true)// NOI18N
 		});
 
 		String oldJavaCp=ep.getProperty(ProjectProperties.JAVAC_CLASSPATH);
@@ -339,6 +339,8 @@ public final class NewVFIJ2SEProjectWizardIterator
 		ep.setProperty(ProjectProperties.EXCLUDES, excludes);
 
 		ep.setProperty(ProjectProperties.SOURCE_ENCODING, "UTF-8");// NOI18N
+
+		ep.setProperty(ProjectProperties.RUN_JVM_ARGS, "-Dorg.slf4j.simpleLogger.defaultLogLevel=debug");// NOI18N
 
 		h.putProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH, ep);
 	}

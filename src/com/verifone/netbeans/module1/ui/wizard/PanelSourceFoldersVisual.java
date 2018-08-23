@@ -119,10 +119,6 @@ public final class PanelSourceFoldersVisual extends SettingsPanel implements
         jLabel2.getAccessibleContext().setAccessibleName(""); // NOI18N
     }// </editor-fold>//GEN-END:initComponents
 
-	void prepareValidation() {
-//		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
 	@Override
 	void store(WizardDescriptor settings) {
 		File[] sourceRoots = ((FolderList)this.sourcePanel).getFiles();

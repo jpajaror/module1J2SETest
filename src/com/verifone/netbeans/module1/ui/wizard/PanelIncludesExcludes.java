@@ -26,16 +26,11 @@ import org.openide.util.HelpCtx;
  *
  * @author JP1
  */
-public class PanelIncludesExcludes implements WizardDescriptor.FinishablePanel {
+public class PanelIncludesExcludes implements WizardDescriptor.Panel {
 	private final IncludeExcludeVisualizer viz;
 
 	public PanelIncludesExcludes() {
 		viz = new IncludeExcludeVisualizer();
-	}
-
-	@Override
-	public boolean isFinishPanel() {
-		return true;
 	}
 
 	@Override
