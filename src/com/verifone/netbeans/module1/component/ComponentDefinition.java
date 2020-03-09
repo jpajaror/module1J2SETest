@@ -96,6 +96,9 @@ public class ComponentDefinition {
 
 		return dependencies;
 	}
+/**
+ * This is a comment added for testing purposes should be removed later
+ */
 
 	public String getComponentName() throws IOException, SAXException,
 			XPathExpressionException {
