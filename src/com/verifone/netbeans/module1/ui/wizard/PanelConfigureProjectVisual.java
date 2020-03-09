@@ -77,6 +77,8 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
         componentFolder = new javax.swing.JTextField();
         browseComponentButton = new javax.swing.JButton();
         jCheckBox1 = new javax.swing.JCheckBox();
+        jLabel1 = new javax.swing.JLabel();
+        buildFolderTextField = new javax.swing.JTextField();
 
         org.openide.awt.Mnemonics.setLocalizedText(projectNameLabel, org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.projectNameLabel.text")); // NOI18N
 
@@ -112,6 +114,11 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
 
         org.openide.awt.Mnemonics.setLocalizedText(jCheckBox1, org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.lbl.buildJAR")); // NOI18N
 
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.jLabel1.text")); // NOI18N
+
+        buildFolderTextField.setText(org.openide.util.NbBundle.getMessage(PanelConfigureProjectVisual.class, "PanelConfigureProjectVisual.buildFolderTextField.text")); // NOI18N
+        buildFolderTextField.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -127,13 +134,15 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
                             .addComponent(projectNameLabel)
                             .addComponent(projectLocationLabel)
                             .addComponent(createdFolderLabel)
-                            .addComponent(componentFolderLabel))
+                            .addComponent(componentFolderLabel)
+                            .addComponent(jLabel1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(componentFolder, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(createdFolderTextField, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(projectLocationTextField, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(projectNameTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE))
+                            .addComponent(projectNameTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
+                            .addComponent(buildFolderTextField))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(browseButton)
@@ -161,9 +170,13 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(projectLocationLabel)
                     .addComponent(createdFolderTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(11, 11, 11)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(buildFolderTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jCheckBox1)
-                .addContainerGap(136, Short.MAX_VALUE))
+                .addContainerGap(105, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -216,11 +229,13 @@ public final class PanelConfigureProjectVisual extends SettingsPanel
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseButton;
     private javax.swing.JButton browseComponentButton;
+    private javax.swing.JTextField buildFolderTextField;
     private javax.swing.JTextField componentFolder;
     private javax.swing.JLabel componentFolderLabel;
     private javax.swing.JLabel createdFolderLabel;
     private javax.swing.JTextField createdFolderTextField;
     private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel projectLocationLabel;
     private javax.swing.JTextField projectLocationTextField;
     private javax.swing.JLabel projectNameLabel;
